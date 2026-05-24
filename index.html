@@ -1,0 +1,2064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="Pardona — Dedicated game server hosting for the UK and India. Low latency, easy setup, 24/7 uptime. Get your server running in minutes."/>
+<title>Pardona — Game Server Hosting</title>
+<style>
+/* ── Variables & Reset ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;--bg-mid:#111111;--bg-card:#141414;--bg-elevated:#1c1c1c;
+  --accent:#dc2626;--accent-glow:#ef4444;--accent-2:#f97316;
+  --white:#ffffff;--off-white:#e0e0e0;--muted:#777777;
+  --border:rgba(255,255,255,0.07);--border-hover:rgba(220,38,38,0.45);
+  --radius:8px;--radius-lg:12px;
+  --shadow:0 16px 60px rgba(0,0,0,0.8);
+  --glow-red:0 0 40px rgba(220,38,38,0.18);
+  --tr:0.2s ease;--max-w:1240px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--white);line-height:1.6;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 45% at 50% -5%,rgba(220,38,38,.07),transparent 55%);pointer-events:none;z-index:0}
+img{display:block;max-width:100%}
+a{text-decoration:none;color:inherit}
+ul{list-style:none}
+
+/* ── Utilities ── */
+.container{max-width:var(--max-w);margin:0 auto;padding:0 24px}
+.section{padding:96px 0}
+.section-alt{background:var(--bg-mid)}
+.tag{display:inline-block;background:rgba(220,38,38,0.1);color:var(--accent-glow);border:1px solid rgba(220,38,38,0.3);padding:5px 16px;border-radius:100px;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}
+.tag-purple{background:rgba(249,115,22,0.1);color:var(--accent-2);border-color:rgba(249,115,22,0.3)}
+h2.stitle{font-size:clamp(1.8rem,4vw,2.7rem);font-weight:800;line-height:1.15;margin-bottom:14px}
+p.ssub{font-size:1.02rem;color:var(--muted);max-width:560px;margin-bottom:52px;line-height:1.75}
+.center{text-align:center}.center .ssub{margin:0 auto 52px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:var(--radius);font-weight:700;font-size:.92rem;cursor:pointer;border:none;transition:all var(--tr);font-family:inherit}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 0 20px rgba(220,38,38,.35),0 4px 16px rgba(0,0,0,.4)}
+.btn-primary:hover{background:var(--accent-glow);box-shadow:0 0 36px rgba(239,68,68,.55),0 4px 20px rgba(0,0,0,.5);transform:translateY(-2px)}
+.btn-outline{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,.2)}
+.btn-outline:hover{border-color:var(--accent-glow);color:var(--accent-glow);background:rgba(220,38,38,.07);transform:translateY(-2px)}
+.btn-ghost{background:rgba(220,38,38,.08);color:var(--accent-glow);border:1px solid rgba(220,38,38,.22)}
+.btn-ghost:hover{background:rgba(220,38,38,.15);border-color:rgba(220,38,38,.4);transform:translateY(-2px)}
+.btn-sm{padding:9px 18px;font-size:.83rem}
+.btn-lg{padding:16px 32px;font-size:1rem}
+.btn-full{width:100%;justify-content:center}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+
+/* ── Page Transitions ── */
+.page{display:none;animation:fadeIn .28s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{opacity:0;transform:translateY(24px);transition:opacity .55s ease,transform .55s ease}
+.fade-up.in{opacity:1;transform:translateY(0)}
+
+/* ── Navigation ── */
+#nav{position:fixed;top:0;left:0;right:0;z-index:900;padding:16px 0;transition:background var(--tr),box-shadow var(--tr)}
+#nav.scrolled{background:rgba(10,10,10,.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:0 4px 32px rgba(0,0,0,.7)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.5rem;font-weight:900;letter-spacing:-.02em;cursor:pointer}
+.logo span{color:var(--accent-glow)}
+.nav-links{display:flex;align-items:center;gap:8px}
+.nav-link{padding:8px 14px;border-radius:8px;color:var(--muted);font-size:.88rem;font-weight:500;cursor:pointer;transition:all var(--tr);border:none;background:none;font-family:inherit}
+.nav-link:hover,.nav-link.active{color:var(--white);background:rgba(255,255,255,.07)}
+.nav-cta{margin-left:8px;padding:9px 20px;font-size:.86rem}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px;z-index:901}
+.hamburger span{display:block;width:24px;height:2px;background:var(--white);border-radius:2px;transition:all .3s}
+.mobile-nav{display:none;position:fixed;inset:0;background:var(--bg);z-index:899;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.mobile-nav.open{display:flex}
+.mobile-nav .nav-link{font-size:1.3rem;padding:14px 28px}
+
+/* ── Hero ── */
+#hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding:120px 0 80px}
+.hero-bg{position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 40%,rgba(220,38,38,.09) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 30% at 10% 80%,rgba(180,20,20,.05) 0%,transparent 50%)}
+.hero-grid{position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse at center,black 30%,transparent 70%)}
+.hero-content{position:relative;max-width:700px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.28);padding:8px 18px;border-radius:100px;font-size:.76rem;font-weight:700;color:var(--accent-glow);margin-bottom:28px;letter-spacing:.04em;backdrop-filter:blur(8px)}
+.hero-badge::before{content:'';width:7px;height:7px;background:var(--accent-glow);border-radius:50%;box-shadow:0 0 8px var(--accent-glow);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+h1.hero-h{font-size:clamp(2.5rem,5.5vw,4rem);font-weight:900;line-height:1.08;letter-spacing:-.03em;margin-bottom:22px}
+.grad{background:linear-gradient(135deg,#ff8080 0%,#ef4444 35%,#dc2626 65%,#f97316 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1.1rem;color:var(--muted);max-width:540px;margin-bottom:38px;line-height:1.72}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+.hero-stats{display:flex;gap:40px;margin-top:60px;flex-wrap:wrap;padding-top:40px;border-top:1px solid var(--border)}
+.stat-n{font-size:2rem;font-weight:900;line-height:1}
+.stat-n em{color:var(--accent-glow);font-style:normal}
+.stat-l{font-size:.8rem;color:var(--muted);margin-top:3px}
+
+/* ── Stats Bar ── */
+.stats-bar{background:linear-gradient(90deg,var(--bg),var(--bg-elevated),var(--bg));border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:0}
+.stats-bar-inner{display:flex;align-items:stretch}
+.sb-item{flex:1;padding:28px 24px;text-align:center;border-right:1px solid var(--border)}
+.sb-item:last-child{border-right:none}
+.sb-num{font-size:1.7rem;font-weight:900;color:var(--white)}
+.sb-num span{color:var(--accent-glow)}
+.sb-label{font-size:.8rem;color:var(--muted);margin-top:2px}
+
+/* ── Service Cards (home preview) ── */
+.svc-preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.svc-card{background:linear-gradient(145deg,rgba(20,20,20,.9),rgba(10,10,10,.95));border:1px solid var(--border);border-radius:var(--radius-lg);padding:36px 30px;transition:all var(--tr);position:relative;overflow:hidden;cursor:pointer}
+.svc-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(220,38,38,.04),transparent 50%);opacity:0;transition:opacity var(--tr)}
+.svc-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),var(--accent-glow),transparent);opacity:0;transition:opacity var(--tr)}
+.svc-card:hover{border-color:rgba(220,38,38,.3);transform:translateY(-6px);box-shadow:var(--shadow),0 0 40px rgba(220,38,38,.12)}
+.svc-card:hover::before{opacity:1}
+.svc-card:hover::after{opacity:1}
+.svc-icon{width:52px;height:52px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:22px;background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.2)}
+.svc-card h3{font-size:1.18rem;font-weight:800;margin-bottom:10px}
+.svc-card p{color:var(--muted);font-size:.91rem;line-height:1.7;margin-bottom:20px}
+.svc-card .learn-more{color:var(--accent-glow);font-size:.85rem;font-weight:700;display:flex;align-items:center;gap:6px;transition:gap var(--tr)}
+.svc-card:hover .learn-more{gap:10px}
+
+/* ── Why Choose Pardona ── */
+.why-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.why-item{background:linear-gradient(145deg,rgba(10,10,10,.8),rgba(10,10,10,.9));border:1px solid var(--border);border-radius:var(--radius-lg);padding:30px 28px;display:flex;gap:18px;align-items:flex-start;transition:all var(--tr)}
+.why-item:hover{border-color:rgba(220,38,38,.3);transform:translateY(-4px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.why-ico{width:46px;height:46px;border-radius:12px;background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.why-item h4{font-size:1rem;font-weight:700;margin-bottom:6px}
+.why-item p{font-size:.87rem;color:var(--muted);line-height:1.65}
+
+/* ── Testimonials ── */
+.test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.test-card{background:linear-gradient(145deg,rgba(20,20,20,.85),rgba(10,10,10,.9));border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px 28px;transition:all var(--tr)}
+.test-card:hover{border-color:rgba(220,38,38,.25);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.35)}
+.test-stars{color:#f59e0b;font-size:1rem;margin-bottom:14px;letter-spacing:2px}
+.test-card blockquote{font-size:.93rem;color:var(--off-white);line-height:1.72;font-style:italic;margin-bottom:22px}
+.test-author{display:flex;align-items:center;gap:12px}
+.test-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem}
+.test-name{font-size:.9rem;font-weight:700}
+.test-role{font-size:.78rem;color:var(--muted)}
+
+/* ── CTA Banner ── */
+.cta-banner{background:linear-gradient(135deg,rgba(220,38,38,.12) 0%,rgba(15,15,15,.95) 50%,rgba(180,20,20,.08) 100%);border:1px solid rgba(220,38,38,.2);border-radius:var(--radius-lg);padding:72px 56px;text-align:center;position:relative;overflow:hidden}
+.cta-banner::before{content:'';position:absolute;top:-100px;right:-100px;width:350px;height:350px;background:radial-gradient(circle,rgba(220,38,38,.18),transparent 65%);border-radius:50%}
+.cta-banner::after{content:'';position:absolute;bottom:-80px;left:-80px;width:250px;height:250px;background:radial-gradient(circle,rgba(220,38,38,.12),transparent 65%);border-radius:50%}
+.cta-banner h2{font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:900;margin-bottom:14px}
+.cta-banner p{color:var(--muted);font-size:1rem;max-width:480px;margin:0 auto 32px}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* ── Newsletter ── */
+.nl-wrap{background:linear-gradient(135deg,rgba(20,20,20,.85),rgba(10,10,10,.9));border:1px solid var(--border);border-radius:var(--radius-lg);padding:48px;display:flex;align-items:center;gap:48px}
+.nl-text{flex:1}
+.nl-text h3{font-size:1.4rem;font-weight:800;margin-bottom:8px}
+.nl-text p{color:var(--muted);font-size:.92rem}
+.nl-form{flex:1;display:flex;gap:10px}
+.nl-form input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:13px 16px;color:var(--white);font-size:.92rem;font-family:inherit;outline:none;transition:border-color var(--tr)}
+.nl-form input:focus{border-color:var(--accent)}
+.nl-form input::placeholder{color:rgba(148,163,184,.5)}
+
+/* ── Partners Strip ── */
+.partners-strip{display:flex;align-items:center;justify-content:center;gap:48px;flex-wrap:wrap;padding:40px 0;opacity:.55;filter:grayscale(1)}
+.partner-logo{font-size:.85rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--white);background:rgba(255,255,255,.08);padding:10px 20px;border-radius:8px}
+
+/* ── Services Detail Page ── */
+.page-hero{padding:120px 0 72px;background:linear-gradient(180deg,var(--bg-mid),var(--bg));position:relative;overflow:hidden;border-bottom:1px solid var(--border)}
+.page-hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 65% at 82% 48%,rgba(220,38,38,.16),transparent 62%),radial-gradient(ellipse 40% 40% at 12% 80%,rgba(220,38,38,.08),transparent 55%)}
+.page-hero-content{position:relative;max-width:640px}
+.page-hero h1{font-size:clamp(2rem,4.5vw,3.2rem);font-weight:900;line-height:1.1;margin-bottom:16px}
+.page-hero p{font-size:1.05rem;color:var(--muted);line-height:1.72}
+
+.svc-detail{padding:80px 0;border-bottom:1px solid var(--border)}
+.svc-detail:last-of-type{border-bottom:none}
+.svc-detail-inner{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.svc-detail-inner.flip{direction:rtl}
+.svc-detail-inner.flip>*{direction:ltr}
+.svc-detail-visual{background:linear-gradient(145deg,rgba(20,20,20,.9),rgba(10,10,10,.95));border:1px solid var(--border);border-radius:var(--radius-lg);padding:48px 40px;position:relative;overflow:hidden}
+.svc-detail-visual::before{content:'';position:absolute;bottom:-60px;right:-60px;width:220px;height:220px;background:radial-gradient(circle,rgba(220,38,38,.18),transparent 65%);border-radius:50%}
+.svc-big-icon{font-size:4rem;margin-bottom:24px}
+.svc-detail-visual h3{font-size:1.3rem;font-weight:800;margin-bottom:12px}
+.svc-detail-visual p{color:var(--muted);font-size:.92rem;line-height:1.7}
+.svc-feature-list{display:flex;flex-direction:column;gap:10px;margin-top:24px}
+.sfl-item{display:flex;align-items:center;gap:10px;font-size:.88rem;color:var(--muted)}
+.sfl-dot{width:7px;height:7px;background:var(--accent-glow);border-radius:50%;flex-shrink:0}
+.svc-detail-content h2{font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:16px}
+.svc-detail-content p{color:var(--muted);line-height:1.75;margin-bottom:14px;font-size:.97rem}
+.process-steps{display:flex;flex-direction:column;gap:18px;margin-top:28px}
+.ps-item{display:flex;gap:16px;align-items:flex-start}
+.ps-num{width:36px;height:36px;background:rgba(220,38,38,.12);border:1px solid rgba(220,38,38,.32);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:800;color:var(--accent-glow);flex-shrink:0;margin-top:2px;box-shadow:0 0 12px rgba(220,38,38,.2)}
+.ps-item h4{font-size:.95rem;font-weight:700;margin-bottom:3px}
+.ps-item p{font-size:.85rem;color:var(--muted)}
+
+.tech-stack-section{padding:64px 0;background:linear-gradient(180deg,var(--bg-mid),var(--bg));border-top:1px solid var(--border)}
+.tech-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-top:40px}
+.tech-chip{background:linear-gradient(145deg,rgba(20,20,20,.8),rgba(10,10,10,.9));border:1px solid var(--border);border-radius:var(--radius);padding:18px 12px;text-align:center;transition:all var(--tr)}
+.tech-chip:hover{border-color:rgba(220,38,38,.4);transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.3),0 0 20px rgba(220,38,38,.1)}
+.tech-chip .ti{font-size:1.6rem;margin-bottom:8px}
+.tech-chip p{font-size:.75rem;color:var(--muted);font-weight:600}
+
+/* ── About Page ── */
+.mission-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:48px}
+.mission-card{border-radius:var(--radius-lg);padding:36px 30px;border:1px solid var(--border);transition:all var(--tr)}
+.mission-card:hover{transform:translateY(-4px)}
+.mission-card.m1{background:linear-gradient(135deg,rgba(220,38,38,.14),rgba(220,38,38,.04));border-color:rgba(220,38,38,.22)}
+.mission-card.m2{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.03));border-color:rgba(249,115,22,.22)}
+.mission-card h3{font-size:1.15rem;font-weight:800;margin-bottom:10px}
+.mission-card p{color:var(--muted);font-size:.9rem;line-height:1.7}
+
+.timeline{display:flex;flex-direction:column;gap:0;margin-top:40px;position:relative}
+.timeline::before{content:'';position:absolute;left:18px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,transparent,rgba(220,38,38,.4),rgba(249,115,22,.3),transparent)}
+.tl-item{display:flex;gap:32px;padding-bottom:36px;position:relative}
+.tl-dot{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,rgba(20,20,20,.9),rgba(10,10,10,.95));border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:var(--accent-glow);flex-shrink:0;z-index:1;margin-top:2px;box-shadow:0 0 14px rgba(220,38,38,.3)}
+.tl-content{padding-top:6px}
+.tl-year{font-size:.75rem;font-weight:700;color:var(--accent-glow);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.tl-content h4{font-size:1rem;font-weight:700;margin-bottom:5px}
+.tl-content p{font-size:.87rem;color:var(--muted);line-height:1.65}
+
+.team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:48px}
+.team-card{background:linear-gradient(145deg,rgba(20,20,20,.85),rgba(10,10,10,.9));border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px 24px;text-align:center;transition:all var(--tr)}
+.team-card:hover{border-color:rgba(220,38,38,.3);transform:translateY(-5px);box-shadow:0 12px 40px rgba(0,0,0,.35),0 0 30px rgba(220,38,38,.08)}
+.team-avatar{width:72px;height:72px;border-radius:50%;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800}
+.team-card h4{font-size:1rem;font-weight:800;margin-bottom:4px}
+.team-role{font-size:.8rem;color:var(--accent-glow);font-weight:600;margin-bottom:10px}
+.team-card p{font-size:.83rem;color:var(--muted);line-height:1.6}
+
+.values-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
+.val-card{background:linear-gradient(145deg,rgba(10,10,10,.8),rgba(10,10,10,.9));border:1px solid var(--border);border-radius:var(--radius-lg);padding:30px 26px;transition:all var(--tr)}
+.val-card:hover{border-color:rgba(220,38,38,.28);transform:translateY(-4px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.val-icon{font-size:1.8rem;margin-bottom:14px}
+.val-card h4{font-size:1rem;font-weight:800;margin-bottom:8px}
+.val-card p{font-size:.86rem;color:var(--muted);line-height:1.65}
+
+.certs-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
+.cert-badge{display:flex;align-items:center;gap:10px;background:linear-gradient(145deg,rgba(20,20,20,.8),rgba(10,10,10,.9));border:1px solid var(--border);border-radius:var(--radius);padding:12px 20px;font-size:.84rem;font-weight:600;transition:all var(--tr)}
+.cert-badge:hover{border-color:rgba(220,38,38,.3);transform:translateY(-2px)}
+.cert-ico{font-size:1.2rem}
+
+/* ── Careers Page ── */
+.perks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px}
+.perk-card{background:linear-gradient(145deg,rgba(10,10,10,.8),rgba(10,10,10,.9));border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 24px;transition:all var(--tr)}
+.perk-card:hover{border-color:rgba(220,38,38,.28);transform:translateY(-4px);box-shadow:0 8px 28px rgba(0,0,0,.3)}
+.perk-icon{font-size:1.8rem;margin-bottom:12px}
+.perk-card h4{font-size:.97rem;font-weight:700;margin-bottom:6px}
+.perk-card p{font-size:.85rem;color:var(--muted);line-height:1.6}
+
+.dept-filter{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px}
+.dept-btn{padding:8px 18px;border-radius:100px;font-size:.83rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit;transition:all var(--tr)}
+.dept-btn:hover,.dept-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 0 16px rgba(220,38,38,.3)}
+
+.jobs-list{display:flex;flex-direction:column;gap:16px}
+.job-card{background:linear-gradient(145deg,rgba(20,20,20,.85),rgba(10,10,10,.9));border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 30px;display:flex;align-items:center;gap:24px;transition:all var(--tr);cursor:pointer}
+.job-card:hover{border-color:rgba(220,38,38,.32);transform:translateX(5px);box-shadow:0 8px 28px rgba(0,0,0,.3),0 0 24px rgba(220,38,38,.08)}
+.job-dept-badge{background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.22);color:var(--accent-glow);font-size:.72rem;font-weight:700;padding:5px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.job-info{flex:1}
+.job-info h3{font-size:1.08rem;font-weight:800;margin-bottom:6px}
+.job-meta{display:flex;gap:18px;flex-wrap:wrap}
+.job-meta span{font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:5px}
+.job-salary{font-size:.88rem;font-weight:700;color:var(--accent-glow);white-space:nowrap}
+.job-arrow{color:var(--muted);font-size:1.2rem;flex-shrink:0;transition:transform var(--tr)}
+.job-card:hover .job-arrow{transform:translateX(4px);color:var(--accent-glow)}
+.jobs-empty{text-align:center;padding:64px 24px;color:var(--muted);font-size:1rem}
+
+/* ── Pricing Page ── */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:start}
+.p-card{background:linear-gradient(145deg,rgba(20,20,20,.85),rgba(10,10,10,.9));border:1px solid var(--border);border-radius:var(--radius-lg);padding:40px 34px;position:relative;transition:all var(--tr)}
+.p-card:hover{transform:translateY(-5px);box-shadow:var(--shadow),0 0 30px rgba(220,38,38,.1)}
+.p-card.featured{background:linear-gradient(145deg,rgba(220,38,38,.14),rgba(20,20,20,.95));border-color:rgba(220,38,38,.45);box-shadow:0 0 60px rgba(220,38,38,.18),inset 0 1px 0 rgba(255,255,255,.06)}
+.popular-tag{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:.72rem;font-weight:700;padding:6px 18px;border-radius:100px;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;box-shadow:0 0 20px rgba(220,38,38,.45)}
+.p-tier{font-size:.76rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-glow);margin-bottom:8px}
+.p-card h3{font-size:1.3rem;font-weight:800;margin-bottom:6px}
+.price-row{display:flex;align-items:baseline;gap:3px;margin:22px 0 8px}
+.p-cur{font-size:1.3rem;font-weight:800;color:var(--muted)}
+.p-amt{font-size:2.7rem;font-weight:900;line-height:1}
+.p-period{color:var(--muted);font-size:.85rem;align-self:flex-end;margin-bottom:3px}
+.p-desc{color:var(--muted);font-size:.88rem;line-height:1.65;margin-bottom:26px}
+.p-divider{border:none;border-top:1px solid var(--border);margin:24px 0}
+.p-features{display:flex;flex-direction:column;gap:11px;margin-bottom:30px}
+.p-feat{display:flex;align-items:center;gap:10px;font-size:.87rem}
+.p-check{width:18px;height:18px;background:rgba(220,38,38,.12);border:1px solid rgba(220,38,38,.25);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.62rem;color:var(--accent-glow);flex-shrink:0}
+
+.compare-wrap{overflow-x:auto;margin-top:56px}
+.compare-table{width:100%;border-collapse:collapse;font-size:.88rem}
+.compare-table th{padding:16px 20px;text-align:left;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);border-bottom:1px solid var(--border)}
+.compare-table th:not(:first-child){text-align:center}
+.compare-table td{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.04)}
+.compare-table td:not(:first-child){text-align:center}
+.compare-table tr:hover td{background:rgba(255,255,255,.02)}
+.compare-table .feature-name{font-weight:500;color:var(--off-white)}
+.compare-table .tier-head{font-weight:800;color:var(--white);font-size:.85rem}
+.compare-table .tier-head.feat{color:var(--accent-glow)}
+.c-yes{color:#10b981;font-size:1rem}
+.c-no{color:rgba(148,163,184,.35);font-size:.9rem}
+
+.faq-list{display:flex;flex-direction:column;gap:12px;margin-top:44px}
+.faq-item{background:linear-gradient(145deg,rgba(20,20,20,.8),rgba(10,10,10,.85));border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:border-color var(--tr)}
+.faq-item:hover,.faq-item.open{border-color:rgba(220,38,38,.25)}
+.faq-q{width:100%;text-align:left;background:none;border:none;color:var(--white);font-family:inherit;font-size:.95rem;font-weight:700;padding:22px 24px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;transition:color var(--tr)}
+.faq-q:hover{color:var(--accent-glow)}
+.faq-arrow{font-size:1.1rem;transition:transform .25s;flex-shrink:0}
+.faq-item.open .faq-arrow{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.faq-item.open .faq-a{max-height:300px}
+.faq-a-inner{padding:0 24px 22px;color:var(--muted);font-size:.9rem;line-height:1.7}
+
+/* ── Contact Page ── */
+.contact-grid{display:grid;grid-template-columns:1fr 1.5fr;gap:64px;align-items:start}
+.contact-info h2{font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;margin-bottom:14px}
+.contact-info>p{color:var(--muted);line-height:1.75;margin-bottom:36px;font-size:.96rem}
+.c-items{display:flex;flex-direction:column;gap:20px;margin-bottom:36px}
+.c-item{display:flex;gap:16px;align-items:flex-start}
+.c-icon{width:44px;height:44px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.18);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.c-item h4{font-size:.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.c-item p{font-size:.93rem}
+.form-wrap{background:linear-gradient(145deg,rgba(20,20,20,.85),rgba(10,10,10,.9));border:1px solid var(--border);border-radius:var(--radius-lg);padding:44px 38px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.fg{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
+.fg label{font-size:.82rem;font-weight:600;color:var(--muted)}
+.fg input,.fg select,.fg textarea{background:rgba(10,10,10,.8);border:1px solid var(--border);border-radius:var(--radius);padding:12px 15px;color:var(--white);font-size:.93rem;font-family:inherit;outline:none;width:100%;transition:border-color var(--tr),box-shadow var(--tr);}
+.fg select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:15px;padding-right:36px}
+.fg select option{background:var(--bg-mid)}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(220,38,38,.16),0 0 20px rgba(220,38,38,.08)}
+.fg input::placeholder,.fg textarea::placeholder{color:rgba(148,163,184,.45)}
+.fg textarea{resize:vertical;min-height:110px}
+.fg.err input,.fg.err select,.fg.err textarea{border-color:#f87171}
+.field-err{font-size:.78rem;color:#f87171;margin-top:2px}
+.form-note{text-align:center;font-size:.78rem;color:var(--muted);margin-top:12px}
+
+/* ── Modals ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.modal-overlay.open{display:flex}
+.modal{background:linear-gradient(145deg,rgba(20,20,20,.98),rgba(10,10,10,.99));border:1px solid rgba(239,68,68,.12);border-radius:var(--radius-lg);width:100%;max-width:620px;max-height:90vh;overflow-y:auto;animation:fadeIn .22s ease;box-shadow:0 24px 80px rgba(0,0,0,.6),0 0 60px rgba(220,38,38,.1)}
+.modal-header{padding:28px 32px 20px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:16px;position:sticky;top:0;background:rgba(20,20,20,.98);backdrop-filter:blur(12px);z-index:1}
+.modal-header h3{font-size:1.25rem;font-weight:800}
+.modal-close{background:rgba(255,255,255,.07);border:none;color:var(--white);width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:background var(--tr);flex-shrink:0}
+.modal-close:hover{background:rgba(255,255,255,.15)}
+.modal-body{padding:28px 32px}
+.job-detail-meta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+.jd-badge{background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.22);color:var(--accent-glow);font-size:.77rem;font-weight:600;padding:5px 12px;border-radius:100px}
+.jd-section{margin-bottom:22px}
+.jd-section h4{font-size:.88rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px}
+.jd-list{display:flex;flex-direction:column;gap:8px}
+.jd-list li{font-size:.9rem;color:var(--off-white);display:flex;gap:10px;line-height:1.6}
+.jd-list li::before{content:'→';color:var(--accent-glow);flex-shrink:0}
+.jd-desc{font-size:.93rem;color:var(--muted);line-height:1.72}
+.modal-footer{padding:20px 32px 28px;display:flex;gap:12px;justify-content:flex-end;border-top:1px solid var(--border)}
+
+/* ── Footer ── */
+footer{background:linear-gradient(180deg,var(--bg-mid),var(--bg));border-top:1px solid var(--border);padding:64px 0 0}
+.footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px}
+.footer-brand p{color:var(--muted);font-size:.88rem;line-height:1.7;margin-top:12px;max-width:280px}
+.footer-col h5{font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:16px}
+.footer-col ul{display:flex;flex-direction:column;gap:10px}
+.footer-col a{color:rgba(255,255,255,.6);font-size:.88rem;transition:color var(--tr)}
+.footer-col a:hover{color:var(--white)}
+.footer-bottom{border-top:1px solid var(--border);padding:24px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.footer-bottom p{color:var(--muted);font-size:.8rem}
+.footer-social{display:flex;gap:10px}
+.social-btn{width:34px;height:34px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:all var(--tr);cursor:pointer}
+.social-btn:hover{background:rgba(220,38,38,.18);border-color:rgba(220,38,38,.4);box-shadow:0 0 14px rgba(220,38,38,.25)}
+
+/* ── Toast ── */
+#toast{position:fixed;bottom:28px;right:28px;padding:14px 22px;border-radius:var(--radius);font-weight:600;font-size:.92rem;z-index:2000;display:none;gap:10px;align-items:center;animation:slideUp .3s ease;max-width:340px;line-height:1.5;backdrop-filter:blur(12px)}
+#toast.show{display:flex}
+#toast.success{background:rgba(16,185,129,.92);color:#fff;box-shadow:0 8px 32px rgba(16,185,129,.45),0 0 0 1px rgba(16,185,129,.3)}
+#toast.error{background:rgba(239,68,68,.92);color:#fff;box-shadow:0 8px 32px rgba(239,68,68,.45),0 0 0 1px rgba(239,68,68,.3)}
+@keyframes slideUp{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* ── Loading spinner ── */
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-box{text-align:center;padding:64px 24px;color:var(--muted)}
+
+/* ── Portfolio ── */
+.port-filter{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px}
+.port-btn{padding:8px 18px;border-radius:100px;font-size:.83rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit;transition:all var(--tr)}
+.port-btn:hover,.port-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 0 16px rgba(220,38,38,.3)}
+.port-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.proj-card{background:linear-gradient(145deg,rgba(20,20,20,.85),rgba(10,10,10,.9));border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;transition:all var(--tr)}
+.proj-card:hover{border-color:rgba(220,38,38,.32);transform:translateY(-6px);box-shadow:var(--shadow),0 0 36px rgba(220,38,38,.12)}
+.proj-thumb{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:var(--bg-elevated)}
+.proj-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .4s ease}
+.proj-card:hover .proj-thumb img{transform:scale(1.05)}
+.proj-thumb-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem}
+.proj-thumb-video{position:relative}
+.proj-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.4)}
+.proj-play-btn{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.2);backdrop-filter:blur(6px);border:2px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.proj-kind-badge{position:absolute;top:10px;right:10px;background:rgba(10,10,10,.8);backdrop-filter:blur(8px);border:1px solid var(--border);color:var(--white);font-size:.68rem;font-weight:700;padding:4px 10px;border-radius:100px;text-transform:uppercase;letter-spacing:.06em}
+.proj-body{padding:22px 22px 24px}
+.proj-cat{font-size:.72rem;font-weight:700;color:var(--accent-glow);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}
+.proj-card h3{font-size:1.05rem;font-weight:800;margin-bottom:8px;line-height:1.3}
+.proj-card p{font-size:.85rem;color:var(--muted);line-height:1.65;margin-bottom:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.proj-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.proj-tag{background:rgba(255,255,255,.06);border:1px solid var(--border);font-size:.72rem;padding:3px 10px;border-radius:100px;color:var(--muted)}
+.proj-footer{display:flex;align-items:center;justify-content:space-between}
+.proj-file-count{font-size:.78rem;color:var(--muted)}
+.port-empty{text-align:center;padding:80px 24px;color:var(--muted);grid-column:1/-1}
+.port-empty .pe-icon{font-size:3rem;margin-bottom:16px}
+
+/* Portfolio Detail Modal */
+.pm-gallery{position:relative;background:rgba(0,0,0,.4);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:22px;aspect-ratio:16/9}
+.pm-gallery img,.pm-gallery video{width:100%;height:100%;object-fit:contain}
+.pm-gallery iframe{width:100%;height:100%;border:none}
+.pm-gallery .pm-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px;color:var(--muted)}
+.pm-gallery .pm-placeholder .pi{font-size:4rem}
+.pm-thumbs{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;margin-bottom:20px}
+.pm-thumb{width:72px;height:54px;border-radius:8px;overflow:hidden;cursor:pointer;flex-shrink:0;border:2px solid transparent;transition:border-color var(--tr);background:var(--bg-elevated);display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.pm-thumb.active{border-color:var(--accent)}
+.pm-thumb img,.pm-thumb video{width:100%;height:100%;object-fit:cover}
+.pm-meta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.pm-badge{background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.22);color:var(--accent-glow);font-size:.76rem;font-weight:600;padding:4px 12px;border-radius:100px}
+.pm-desc{color:var(--muted);font-size:.93rem;line-height:1.75}
+.pm-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+
+/* ── Nav Auth Buttons ── */
+.nav-auth{display:flex;align-items:center;gap:8px}
+.btn-nav-login{background:transparent;color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.18);padding:7px 16px;border-radius:var(--radius);font-size:.84rem;font-weight:600;cursor:pointer;transition:all var(--tr);font-family:inherit}
+.btn-nav-login:hover{border-color:rgba(255,255,255,.4);color:#fff;background:rgba(255,255,255,.05)}
+.btn-nav-register{background:var(--accent);color:#fff;padding:7px 16px;border-radius:var(--radius);font-size:.84rem;font-weight:700;cursor:pointer;border:none;transition:all var(--tr);font-family:inherit;box-shadow:0 0 12px rgba(220,38,38,.3)}
+.btn-nav-register:hover{background:var(--accent-glow);box-shadow:0 0 20px rgba(239,68,68,.45);transform:translateY(-1px)}
+
+/* ── Live Stats Bar ── */
+.live-stats-bar{background:var(--bg-mid);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.live-stats-inner{display:grid;grid-template-columns:repeat(4,1fr)}
+.ls-item{padding:26px 24px;text-align:center;border-right:1px solid var(--border);position:relative;overflow:hidden}
+.ls-item:last-child{border-right:none}
+.ls-item::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.5}
+.ls-num{font-size:2rem;font-weight:900;color:var(--white);line-height:1}
+.ls-num .accent{color:var(--accent-glow)}
+.ls-label{font-size:.75rem;color:var(--muted);margin-top:5px;text-transform:uppercase;letter-spacing:.07em;font-weight:600;display:flex;align-items:center;justify-content:center;gap:5px}
+.ls-dot{display:inline-block;width:6px;height:6px;background:#22c55e;border-radius:50%;box-shadow:0 0 6px #22c55e;animation:blink 2s infinite}
+
+/* ── Featured Servers ── */
+.servers-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.server-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:all var(--tr)}
+.server-card:hover{border-color:rgba(220,38,38,.28);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.5),0 0 28px rgba(220,38,38,.07)}
+.sc-header{padding:18px 18px 12px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.sc-game-info{display:flex;align-items:center;gap:11px}
+.sc-game-icon{width:40px;height:40px;border-radius:8px;background:var(--bg-elevated);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.sc-game-name{font-size:.97rem;font-weight:800;margin-bottom:1px}
+.sc-server-name{font-size:.74rem;color:var(--muted)}
+.sc-status{display:flex;align-items:center;gap:5px;font-size:.7rem;font-weight:700;padding:4px 10px;border-radius:100px;white-space:nowrap}
+.sc-status.online{background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.2)}
+.sc-status.offline{background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.2)}
+.sc-status-dot{width:5px;height:5px;border-radius:50%;background:currentColor;animation:blink 2s infinite}
+.sc-body{padding:0 18px 18px}
+.sc-players-text{font-size:.72rem;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between}
+.sc-players-bar{background:rgba(255,255,255,.05);border-radius:100px;height:3px;margin-bottom:14px;overflow:hidden}
+.sc-players-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-glow));border-radius:100px}
+.sc-meta{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.sc-badge{display:flex;align-items:center;gap:4px;font-size:.72rem;font-weight:600;color:var(--muted);background:var(--bg-elevated);padding:4px 9px;border-radius:5px}
+.sc-footer{display:flex;justify-content:space-between;align-items:center}
+.sc-region{font-size:.72rem;color:var(--muted)}
+.btn-join{background:var(--accent);color:#fff;padding:7px 16px;border-radius:var(--radius);font-size:.8rem;font-weight:700;cursor:pointer;border:none;transition:all var(--tr);font-family:inherit}
+.btn-join:hover{background:var(--accent-glow);transform:translateY(-1px);box-shadow:0 0 14px rgba(239,68,68,.4)}
+
+/* ── Features Grid ── */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.feat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:30px 26px;transition:all var(--tr)}
+.feat-card:hover{border-color:rgba(220,38,38,.22);transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,.4)}
+.feat-icon{width:46px;height:46px;border-radius:10px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.16);display:flex;align-items:center;justify-content:center;font-size:1.25rem;margin-bottom:16px}
+.feat-card h4{font-size:1rem;font-weight:800;margin-bottom:7px}
+.feat-card p{font-size:.87rem;color:var(--muted);line-height:1.7}
+
+/* ── Announcements + Community Sidebar ── */
+.community-layout{display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start}
+.announcements-list{display:flex;flex-direction:column;gap:10px}
+.ann-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px;transition:all var(--tr);cursor:pointer}
+.ann-card:hover{border-color:rgba(220,38,38,.22);background:var(--bg-elevated)}
+.ann-meta{display:flex;align-items:center;gap:8px;margin-bottom:9px;flex-wrap:wrap}
+.ann-date{font-size:.71rem;color:var(--muted);font-weight:600}
+.ann-cat{font-size:.67rem;font-weight:700;padding:3px 8px;border-radius:100px;text-transform:uppercase;letter-spacing:.06em}
+.ann-cat.news{background:rgba(220,38,38,.1);color:var(--accent-glow);border:1px solid rgba(220,38,38,.2)}
+.ann-cat.update{background:rgba(59,130,246,.1);color:#60a5fa;border:1px solid rgba(59,130,246,.2)}
+.ann-cat.event{background:rgba(168,85,247,.1);color:#c084fc;border:1px solid rgba(168,85,247,.2)}
+.ann-card h4{font-size:.97rem;font-weight:800;margin-bottom:6px;line-height:1.3}
+.ann-card p{font-size:.85rem;color:var(--muted);line-height:1.65}
+.ann-arrow{font-size:.78rem;color:var(--muted);margin-top:10px;display:flex;align-items:center;gap:5px;transition:color var(--tr)}
+.ann-card:hover .ann-arrow{color:var(--accent-glow)}
+
+/* ── Community Sidebar ── */
+.community-sidebar{display:flex;flex-direction:column;gap:12px;position:sticky;top:80px}
+.sidebar-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.sidebar-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.sidebar-header h5{font-size:.76rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.sidebar-body{padding:14px 16px}
+.online-members-count{font-size:2rem;font-weight:900;color:var(--white)}
+.online-members-count span{color:var(--accent-glow)}
+.online-sub{font-size:.76rem;color:var(--muted);margin-top:2px;margin-bottom:10px}
+.activity-list{display:flex;flex-direction:column;gap:9px}
+.act-item{display:flex;align-items:flex-start;gap:9px}
+.act-avatar{width:28px;height:28px;border-radius:6px;background:var(--bg-elevated);display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}
+.act-text{font-size:.78rem;color:var(--muted);line-height:1.45}
+.act-text strong{color:var(--white);font-weight:700}
+.act-time{font-size:.68rem;color:var(--muted);opacity:.6;margin-top:1px}
+.quick-links-list{display:flex;flex-direction:column;gap:2px}
+.ql-link{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:6px;color:var(--muted);font-size:.83rem;font-weight:600;cursor:pointer;transition:all var(--tr);border:1px solid transparent}
+.ql-link:hover{background:rgba(255,255,255,.04);border-color:var(--border);color:var(--white)}
+.ql-link-icon{font-size:.95rem;width:18px;text-align:center}
+
+/* ── Responsive ── */
+@media(max-width:1024px){
+  .grid-4,.team-grid{grid-template-columns:repeat(2,1fr)}
+  .tech-grid{grid-template-columns:repeat(4,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .community-layout{grid-template-columns:1fr}
+  .community-sidebar{position:static}
+  .servers-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  .section{padding:56px 0}
+  .grid-2,.svc-detail-inner,.contact-grid,.about-grid,.nl-wrap{grid-template-columns:1fr;gap:28px}
+  .svc-detail-inner.flip{direction:ltr}
+  .grid-3,.svc-preview-grid,.test-grid,.pricing-grid,.perks-grid,.values-grid,.port-grid,.features-grid,.servers-grid{grid-template-columns:1fr}
+  .mission-grid,.why-grid{grid-template-columns:1fr}
+  .live-stats-inner{grid-template-columns:1fr 1fr}
+  .ls-item{border-right:none;border-bottom:1px solid var(--border)}
+  .stats-bar-inner{flex-wrap:wrap}
+  .sb-item{flex:1 0 50%;border-right:none;border-bottom:1px solid var(--border)}
+  .tech-grid{grid-template-columns:repeat(3,1fr)}
+  .nav-links{display:none}
+  .nav-auth{display:none}
+  .hamburger{display:flex}
+  .hero-stats{gap:24px}
+  .form-row{grid-template-columns:1fr}
+  .form-wrap{padding:26px 18px}
+  .modal-body,.modal-header,.modal-footer{padding-left:18px;padding-right:18px}
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;text-align:center}
+  .cta-banner{padding:40px 24px}
+  .nl-wrap{flex-direction:column;padding:28px 22px}
+  .nl-form{flex-direction:column}
+  .community-layout{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav id="nav">
+  <div class="container nav-inner">
+    <div class="logo" onclick="navigate('home')">Par<span>dona</span></div>
+    <div class="nav-links">
+      <button class="nav-link active" data-page="home"     onclick="navigate('home')">Home</button>
+      <button class="nav-link"        data-page="services" onclick="navigate('services')">Servers</button>
+      <button class="nav-link"        data-page="about"    onclick="navigate('about')">Community</button>
+      <button class="nav-link"        data-page="about"    onclick="navigate('about')">About</button>
+      <button class="nav-link"        data-page="contact"  onclick="navigate('contact')">Contact</button>
+      <button class="nav-link btn btn-primary nav-cta" onclick="navigate('pricing')">Get Started</button>
+    </div>
+    <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Toggle navigation" aria-expanded="false" aria-controls="mobileNav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+  <button class="nav-link" onclick="navigate('home');toggleMobileNav()">Home</button>
+  <button class="nav-link" onclick="navigate('services');toggleMobileNav()">Servers</button>
+  <button class="nav-link" onclick="navigate('about');toggleMobileNav()">Community</button>
+  <button class="nav-link" onclick="navigate('about');toggleMobileNav()">About</button>
+  <button class="nav-link" onclick="navigate('contact');toggleMobileNav()">Contact</button>
+  <button class="nav-link btn btn-primary" style="margin-top:8px" onclick="toggleMobileNav();navigate('pricing')">Get Started</button>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE: HOME
+════════════════════════════════════════════════ -->
+<div id="page-home" class="page active">
+
+  <!-- Hero -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">UK &amp; India Based · Low Latency · Always Online</div>
+        <h1 class="hero-h">Your Game.<br>Your Server.<br><span class="grad">Your Community.</span></h1>
+        <p class="hero-sub">UK &amp; India based dedicated game servers — low latency, high performance, always online. Join thousands of players already gaming on Pardona.</p>
+        <div class="hero-btns">
+          <button class="btn btn-primary btn-lg" onclick="navigate('services')">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Browse Servers
+          </button>
+          <button class="btn btn-outline btn-lg" onclick="navigate('contact')">Contact Us</button>
+        </div>
+        <div class="hero-stats">
+          <div><div class="stat-n"><em>99.9</em>%</div><div class="stat-l">Uptime SLA</div></div>
+          <div><div class="stat-n">&lt;<em>10</em>ms</div><div class="stat-l">UK Ping</div></div>
+          <div><div class="stat-n">&lt;<em>20</em>ms</div><div class="stat-l">India Ping</div></div>
+          <div><div class="stat-n"><em>24/7</em></div><div class="stat-l">Support</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Features -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="center fade-up">
+        <div class="tag">Why Pardona</div>
+        <h2 class="stitle">Everything You Need<br>to Play at Your Best</h2>
+        <p class="ssub">Dedicated hardware, dual-region coverage, and a community built for gamers — not repurposed web hosting.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feat-card fade-up">
+          <div class="feat-icon">⚡</div>
+          <h4>Ultra-Low Latency</h4>
+          <p>Sub-10ms ping for UK players, sub-20ms for India. London and Mumbai data centres purpose-built for gaming traffic.</p>
+        </div>
+        <div class="feat-card fade-up">
+          <div class="feat-icon">🖥️</div>
+          <h4>Dedicated Hardware</h4>
+          <p>Your server runs on dedicated RAM and CPU — no shared resources, no noisy neighbours. Consistent performance every session.</p>
+        </div>
+        <div class="feat-card fade-up">
+          <div class="feat-icon">🕐</div>
+          <h4>24/7 Support</h4>
+          <p>Real humans on Discord and live chat around the clock. If your server has a problem, we're on it before you've finished typing.</p>
+        </div>
+        <div class="feat-card fade-up">
+          <div class="feat-icon">🔧</div>
+          <h4>Easy Setup</h4>
+          <p>Deploy popular games in under 5 minutes. Mods, plugins, backups — all managed without ever touching a command line.</p>
+        </div>
+        <div class="feat-card fade-up">
+          <div class="feat-icon">🌍</div>
+          <h4>UK &amp; India Regions</h4>
+          <p>Two regional data centres so your whole squad gets great ping, whether they're in London or Mumbai. Switch region any time.</p>
+        </div>
+        <div class="feat-card fade-up">
+          <div class="feat-icon">🎮</div>
+          <h4>Community Driven</h4>
+          <p>Pardona is built by gamers. Every feature, every plan, and every support response comes from people who actually play the games you host.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-banner fade-up">
+        <div class="tag">Ready to Play?</div>
+        <h2>Get Your Server Running Today.</h2>
+        <p>Pick a plan, choose your region — UK or India — and you'll be in-game within minutes. No hidden fees, cancel any time.</p>
+        <div class="cta-btns">
+          <button class="btn btn-primary btn-lg" onclick="navigate('pricing')">View Plans</button>
+          <button class="btn btn-outline btn-lg" onclick="navigate('contact')">Contact Us</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Games Strip -->
+  <section class="section" style="padding:40px 0">
+    <div class="container">
+      <p class="center" style="font-size:.72rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:22px">Games We Support</p>
+      <div class="partners-strip">
+        <div class="partner-logo">Minecraft</div>
+        <div class="partner-logo">Rust</div>
+        <div class="partner-logo">Valheim</div>
+        <div class="partner-logo">ARK</div>
+        <div class="partner-logo">CS2</div>
+        <div class="partner-logo">Terraria</div>
+        <div class="partner-logo">DayZ</div>
+        <div class="partner-logo">Palworld</div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page-home -->
+
+
+<!-- ══════════════════════════════════════════════
+     PAGE: SERVICES
+════════════════════════════════════════════════ -->
+<div id="page-services" class="page">
+
+  <div class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="container page-hero-content">
+      <div class="tag">Our Servers</div>
+      <h1>Dedicated Game Servers.<br>Zero Compromise.</h1>
+      <p>Purpose-built hardware in the UK and India. Pick your game, choose your region, and go live in under 5 minutes with full admin control.</p>
+    </div>
+  </div>
+
+  <!-- Dedicated Game Servers -->
+  <div class="svc-detail">
+    <div class="container">
+      <div class="svc-detail-inner">
+        <div class="svc-detail-visual fade-up">
+          <div class="svc-big-icon">🖥️</div>
+          <h3>Dedicated Game Servers</h3>
+          <p>Your resources, exclusively yours. No noisy neighbours, no shared CPU spikes — just raw, consistent performance for every player on your server.</p>
+          <div class="svc-feature-list">
+            <div class="sfl-item"><div class="sfl-dot"></div>Dedicated RAM &amp; CPU — never shared</div>
+            <div class="sfl-item"><div class="sfl-dot"></div>NVMe SSD storage for fast world loads</div>
+            <div class="sfl-item"><div class="sfl-dot"></div>Runs 24/7 even when you're offline</div>
+            <div class="sfl-item"><div class="sfl-dot"></div>Full FTP &amp; admin panel access</div>
+            <div class="sfl-item"><div class="sfl-dot"></div>Unlimited player slots (plan dependent)</div>
+            <div class="sfl-item"><div class="sfl-dot"></div>Automated daily backups included</div>
+          </div>
+        </div>
+        <div class="svc-detail-content fade-up">
+          <div class="tag">Dedicated Servers</div>
+          <h2>Your Server, Your Rules —<br>Always Online</h2>
+          <p>A dedicated server means your 30-player Minecraft world doesn't stutter when someone's building a mega-base. It means your Rust wipe runs on time. It means your squad can always connect, no matter the hour.</p>
+          <p>We handle the hardware, the network, and the monitoring. You handle the gameplay.</p>
+          <div class="process-steps">
+            <div class="ps-item"><div class="ps-num">1</div><div><h4>Choose Your Game &amp; Plan</h4><p>Select your game, pick a plan that fits your player count, and choose UK or India as your region.</p></div></div>
+            <div class="ps-item"><div class="ps-num">2</div><div><h4>Instant Deployment</h4><p>Your server is provisioned automatically. The game is installed and you're given panel access within minutes.</p></div></div>
+            <div class="ps-item"><div class="ps-num">3</div><div><h4>Configure &amp; Invite</h4><p>Customise your settings, install mods, whitelist players — everything from the control panel or FTP.</p></div></div>
+            <div class="ps-item"><div class="ps-num">4</div><div><h4>Play — We Handle the Rest</h4><p>We monitor uptime, apply security patches, and take daily snapshots. You just play.</p></div></div>
+          </div>
+          <div style="margin-top:28px">
+            <button class="btn btn-primary" onclick="navigate('pricing')">See Server Plans</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Low Latency -->
+  <div class="svc-detail" style="background:var(--bg-mid)">
+    <div class="container">
+      <div class="svc-detail-inner flip">
+        <div class="svc-detail-visual fade-up">
+          <div class="svc-big-icon">⚡</div>
+          <h3>Ultra-Low Latency</h3>
+          <p>Regional data centres in London (UK) and Mumbai (India) keep your ping as low as physically possible for players in both markets.</p>
+          <div class="svc-feature-list">
+            <div class="sfl-item"><div class="sfl-dot"></div>London DC — &lt;10ms for UK players</div>
+            <div class="sfl-item"><div class="sfl-dot"></div>Mumbai DC — &lt;20ms for India players</div>
+            <div class="sfl-item"><div class="sfl-dot"></div>1 Gbps uplink per server</div>
+            <div class="sfl-item"><div class="sfl-dot"></div>BGP routing for optimal peering</div>
+            <div class="sfl-item"><div class="sfl-dot"></div>Enterprise DDoS mitigation included</div>
+            <div class="sfl-item"><div class="sfl-dot"></div>Zero bandwidth caps on all plans</div>
+          </div>
+        </div>
+        <div class="svc-detail-content fade-up">
+          <div class="tag">Low Latency</div>
+          <h2>Every Millisecond<br>Matters in Game</h2>
+          <p>Lag is the enemy. Whether it's a missed headshot because of rubber-banding, or a raid that desynchs at the worst moment — high ping ruins experiences. We eliminate it.</p>
+          <p>Our network is connected directly to major UK and Indian ISPs through peering agreements, keeping packets on the fastest possible path from player to server.</p>
+          <div class="process-steps">
+            <div class="ps-item"><div class="ps-num">🇬🇧</div><div><h4>United Kingdom</h4><p>London data centre. Tier 3 facility with redundant power and cooling. Best for EU and UK-based players.</p></div></div>
+            <div class="ps-item"><div class="ps-num">🇮🇳</div><div><h4>India</h4><p>Mumbai data centre. Direct peering with Jio, Airtel, and BSNL for the lowest possible latency nationwide.</p></div></div>
+          </div>
+          <div style="margin-top:28px">
+            <button class="btn btn-primary" onclick="navigate('contact')">Ask About Regions</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Easy Setup & 24/7 -->
+  <div class="svc-detail">
+    <div class="container">
+      <div class="svc-detail-inner">
+        <div class="svc-detail-visual fade-up">
+          <div class="svc-big-icon">🔧</div>
+          <h3>Easy Setup &amp; 24/7 Uptime</h3>
+          <p>A clean control panel, one-click mod installs, and a support team available around the clock — so you never feel stuck.</p>
+          <div class="svc-feature-list">
+            <div class="sfl-item"><div class="sfl-dot"></div>Web-based control panel — no SSH needed</div>
+            <div class="sfl-item"><div class="sfl-dot"></div>One-click mod &amp; plugin installation</div>
+            <div class="sfl-item"><div class="sfl-dot"></div>Real-time console &amp; log viewer</div>
+            <div class="sfl-item"><div class="sfl-dot"></div>Scheduled restarts &amp; task automation</div>
+            <div class="sfl-item"><div class="sfl-dot"></div>99.9% uptime SLA on all plans</div>
+            <div class="sfl-item"><div class="sfl-dot"></div>Discord &amp; live chat support 24/7</div>
+          </div>
+        </div>
+        <div class="svc-detail-content fade-up">
+          <div class="tag">Easy Setup</div>
+          <h2>Live in 5 Minutes.<br>Support Whenever You Need It.</h2>
+          <p>You don't need to be a sysadmin. Our panel is designed for players — intuitive, fast, and packed with the tools you actually use without the noise you don't.</p>
+          <p>And if you hit a wall, our support team is on Discord 24/7. Average first response time: under 10 minutes.</p>
+          <div class="process-steps">
+            <div class="ps-item"><div class="ps-num">1</div><div><h4>Sign Up &amp; Pick a Plan</h4><p>Create an account and select your game and server size. Takes two minutes.</p></div></div>
+            <div class="ps-item"><div class="ps-num">2</div><div><h4>Server Goes Live</h4><p>Automatic provisioning — your server is ready to accept connections within 5 minutes.</p></div></div>
+            <div class="ps-item"><div class="ps-num">3</div><div><h4>Manage From Anywhere</h4><p>The web panel works on any device. Restart, update, or tweak settings from your phone if you need to.</p></div></div>
+            <div class="ps-item"><div class="ps-num">4</div><div><h4>We Monitor 24/7</h4><p>Automated health checks every 30 seconds. If something goes wrong, we're fixing it before you notice.</p></div></div>
+          </div>
+          <div style="margin-top:28px">
+            <button class="btn btn-primary" onclick="navigate('pricing')">Get Started</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supported Games -->
+  <div class="tech-stack-section">
+    <div class="container">
+      <div class="center fade-up">
+        <div class="tag">Supported Games</div>
+        <h2 class="stitle">Deploy Any of These<br>in Under 5 Minutes</h2>
+      </div>
+      <div class="tech-grid">
+        <div class="tech-chip fade-up"><div class="ti">⛏️</div><p>Minecraft</p></div>
+        <div class="tech-chip fade-up"><div class="ti">🔫</div><p>Rust</p></div>
+        <div class="tech-chip fade-up"><div class="ti">🪓</div><p>Valheim</p></div>
+        <div class="tech-chip fade-up"><div class="ti">🦖</div><p>ARK</p></div>
+        <div class="tech-chip fade-up"><div class="ti">💣</div><p>CS2</p></div>
+        <div class="tech-chip fade-up"><div class="ti">🌳</div><p>Terraria</p></div>
+        <div class="tech-chip fade-up"><div class="ti">🧟</div><p>DayZ</p></div>
+        <div class="tech-chip fade-up"><div class="ti">🏝️</div><p>Palworld</p></div>
+        <div class="tech-chip fade-up"><div class="ti">🚀</div><p>Space Engineers</p></div>
+        <div class="tech-chip fade-up"><div class="ti">🌲</div><p>The Forest</p></div>
+        <div class="tech-chip fade-up"><div class="ti">🧱</div><p>7 Days to Die</p></div>
+        <div class="tech-chip fade-up"><div class="ti">🎮</div><p>Custom Game</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-banner fade-up">
+        <div class="tag">Don't See Your Game?</div>
+        <h2>We Can Host It.</h2>
+        <p>If your game runs a dedicated server binary, we can host it. Get in touch and we'll set it up for you.</p>
+        <div class="cta-btns">
+          <button class="btn btn-primary btn-lg" onclick="navigate('contact')">Contact Us</button>
+          <button class="btn btn-outline btn-lg" onclick="navigate('pricing')">View Plans</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page-services -->
+
+
+<!-- ══════════════════════════════════════════════
+     PAGE: ABOUT
+════════════════════════════════════════════════ -->
+<div id="page-about" class="page">
+
+  <div class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="container page-hero-content">
+      <div class="tag">About Pardona</div>
+      <h1>Built by Gamers.<br>For Gamers.</h1>
+      <p>Pardona is a game server hosting company based in the UK and India. We started because we were tired of lag, overloaded shared servers, and support teams that didn't speak gamer. So we built the hosting we always wanted.</p>
+    </div>
+  </div>
+
+  <!-- Mission & Vision -->
+  <section class="section">
+    <div class="container">
+      <div class="center fade-up">
+        <div class="tag">Why We Exist</div>
+        <h2 class="stitle">Mission &amp; Vision</h2>
+      </div>
+      <div class="mission-grid fade-up">
+        <div class="mission-card m1">
+          <div style="font-size:2rem;margin-bottom:12px">🎯</div>
+          <h3>Our Mission</h3>
+          <p>To give gamers in the UK and India access to fast, reliable dedicated servers — without the complexity, overpriced plans, or support teams that don't know what a tick rate is. Gaming should be the hard part. Hosting shouldn't be.</p>
+        </div>
+        <div class="mission-card m2">
+          <div style="font-size:2rem;margin-bottom:12px">🔭</div>
+          <h3>Our Vision</h3>
+          <p>A world where every gaming community — from a 10-person friend group to a 200-player public server — can access professional-grade hosting that keeps up with them. No compromise on performance, no excuses on uptime.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Story Timeline -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="grid-2" style="gap:72px">
+        <div class="fade-up">
+          <div class="tag">Our Story</div>
+          <h2 class="stitle">How Pardona Started</h2>
+          <p style="color:var(--muted);line-height:1.78;margin-bottom:16px">Pardona started in 2024 when a group of gamers across the UK and India got tired of paying for shared hosting that couldn't handle peak-hour traffic. The final straw: a 50-player Minecraft server that rubber-banded every evening because someone else on the same machine was running a crypto miner.</p>
+          <p style="color:var(--muted);line-height:1.78">We built our own infrastructure, launched a simple panel, and started hosting for our communities. Word spread. In 2025 we opened to the public with data centres in London and Mumbai — and we haven't looked back.</p>
+          <div style="margin-top:28px">
+            <button class="btn btn-ghost" onclick="navigate('contact')">Get in Touch →</button>
+          </div>
+        </div>
+        <div class="fade-up">
+          <div class="timeline">
+            <div class="tl-item">
+              <div class="tl-dot">24</div>
+              <div class="tl-content"><div class="tl-year">2024</div><h4>Pardona is Born</h4><p>Fed up with shared hosting, our founding team built a dedicated server cluster and started hosting for their own communities in the UK and India.</p></div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot">24</div>
+              <div class="tl-content"><div class="tl-year">Late 2024</div><h4>London DC Goes Live</h4><p>First data centre launched in London. Minecraft, Rust, and Valheim were the first three games supported. Sub-10ms ping for UK players from day one.</p></div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot">25</div>
+              <div class="tl-content"><div class="tl-year">2025</div><h4>Mumbai DC Opens</h4><p>Expanded to India with a Mumbai data centre — peered directly with Jio, Airtel, and BSNL for sub-20ms latency across the country.</p></div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot">25</div>
+              <div class="tl-content"><div class="tl-year">Mid 2025</div><h4>12 Games Supported</h4><p>Added ARK, CS2, DayZ, Palworld, and more. Launched the web control panel so anyone can manage their server without touching a command line.</p></div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot">26</div>
+              <div class="tl-content"><div class="tl-year">2026</div><h4>Pardona Today</h4><p>Thousands of active servers across two regions, 24/7 support, and a growing list of supported games. We're just getting started.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Founder -->
+  <section class="section">
+    <div class="container">
+      <div class="center fade-up">
+        <div class="tag">Our Regions</div>
+        <h2 class="stitle">Where We Operate</h2>
+        <p class="ssub">Two data centres, one mission: the lowest possible ping for players in the UK and India.</p>
+      </div>
+      <div class="team-grid" style="grid-template-columns:repeat(2,1fr);max-width:760px;margin:0 auto">
+        <div class="team-card fade-up" style="text-align:center;border-color:rgba(220,38,38,.3);box-shadow:0 0 40px rgba(220,38,38,.08)">
+          <div class="team-avatar" style="background:linear-gradient(135deg,#dc2626,#b91c1c);margin:0 auto 16px;width:80px;height:80px;font-size:2rem">🇬🇧</div>
+          <h4 style="font-size:1.1rem">United Kingdom</h4>
+          <div class="team-role">London Data Centre</div>
+          <p style="margin-top:12px;color:var(--muted);font-size:.85rem;line-height:1.7">Tier 3 facility in London with redundant power, cooling, and 1 Gbps uplink. Best ping for players across the UK and Western Europe.</p>
+          <div style="margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+            <span style="background:rgba(220,38,38,.1);color:var(--accent-glow);border:1px solid rgba(220,38,38,.25);padding:3px 10px;border-radius:100px;font-size:.75rem;font-weight:600">&lt;10ms UK</span>
+            <span style="background:rgba(220,38,38,.1);color:var(--accent-glow);border:1px solid rgba(220,38,38,.25);padding:3px 10px;border-radius:100px;font-size:.75rem;font-weight:600">DDoS Protected</span>
+            <span style="background:rgba(220,38,38,.1);color:var(--accent-glow);border:1px solid rgba(220,38,38,.25);padding:3px 10px;border-radius:100px;font-size:.75rem;font-weight:600">99.9% SLA</span>
+          </div>
+        </div>
+        <div class="team-card fade-up" style="text-align:center">
+          <div class="team-avatar" style="background:linear-gradient(135deg,#f97316,#dc2626);margin:0 auto 16px;width:80px;height:80px;font-size:2rem">🇮🇳</div>
+          <h4 style="font-size:1.1rem">India</h4>
+          <div class="team-role">Mumbai Data Centre</div>
+          <p style="margin-top:12px;color:var(--muted);font-size:.85rem;line-height:1.7">Mumbai facility peered directly with Jio, Airtel, and BSNL for the lowest possible latency for players across India and South Asia.</p>
+          <div style="margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+            <span style="background:rgba(239,68,68,.08);color:#5eead4;border:1px solid rgba(239,68,68,.2);padding:3px 10px;border-radius:100px;font-size:.75rem;font-weight:600">&lt;20ms India</span>
+            <span style="background:rgba(239,68,68,.08);color:#5eead4;border:1px solid rgba(239,68,68,.2);padding:3px 10px;border-radius:100px;font-size:.75rem;font-weight:600">1 Gbps Uplink</span>
+            <span style="background:rgba(239,68,68,.08);color:#5eead4;border:1px solid rgba(239,68,68,.2);padding:3px 10px;border-radius:100px;font-size:.75rem;font-weight:600">99.9% SLA</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="center fade-up">
+        <div class="tag">Our Values</div>
+        <h2 class="stitle">What We Stand For</h2>
+      </div>
+      <div class="values-grid">
+        <div class="val-card fade-up">
+          <div class="val-icon">🎮</div>
+          <h4>Gamers First</h4>
+          <p>Every decision — hardware, network, panel design, pricing — starts with one question: does this make gaming better for our players?</p>
+        </div>
+        <div class="val-card fade-up">
+          <div class="val-icon">⚡</div>
+          <h4>Performance Over Everything</h4>
+          <p>We don't cut corners on hardware to hit a price point. Low latency and high uptime are non-negotiable on every plan we offer.</p>
+        </div>
+        <div class="val-card fade-up">
+          <div class="val-icon">🗣️</div>
+          <h4>Straight Talk</h4>
+          <p>No marketing fluff. We'll tell you what specs you actually need for your player count, and we won't upsell you on what you don't.</p>
+        </div>
+        <div class="val-card fade-up">
+          <div class="val-icon">🛡️</div>
+          <h4>Security by Default</h4>
+          <p>DDoS protection, automated backups, and encrypted connections — included on every plan, not bolted on as expensive add-ons.</p>
+        </div>
+        <div class="val-card fade-up">
+          <div class="val-icon">🌍</div>
+          <h4>Two Regions, One Team</h4>
+          <p>UK and India are equal first-class regions for us. We have engineers on the ground in both countries and support that spans both time zones.</p>
+        </div>
+        <div class="val-card fade-up">
+          <div class="val-icon">🤝</div>
+          <h4>Community Driven</h4>
+          <p>We're active in the gaming communities we serve. When you ask for a feature or a new game, we actually listen and ship it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills & Stack -->
+  <section class="section">
+    <div class="container fade-up">
+      <div class="tag">What's Included</div>
+      <h2 class="stitle">Every Plan Comes With</h2>
+      <div class="certs-row" style="margin-top:28px">
+        <div class="cert-badge"><div class="cert-ico">🖥️</div>Dedicated CPU &amp; RAM</div>
+        <div class="cert-badge"><div class="cert-ico">💾</div>NVMe SSD Storage</div>
+        <div class="cert-badge"><div class="cert-ico">🛡️</div>DDoS Protection</div>
+        <div class="cert-badge"><div class="cert-ico">💾</div>Daily Automated Backups</div>
+        <div class="cert-badge"><div class="cert-ico">🔧</div>Web Control Panel</div>
+        <div class="cert-badge"><div class="cert-ico">📡</div>1 Gbps Uplink</div>
+        <div class="cert-badge"><div class="cert-ico">🕐</div>24/7 Live Support</div>
+        <div class="cert-badge"><div class="cert-ico">📋</div>99.9% Uptime SLA</div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page-about -->
+
+
+<!-- ══════════════════════════════════════════════
+     PAGE: CAREERS
+════════════════════════════════════════════════ -->
+<div id="page-careers" class="page">
+
+  <div class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="container page-hero-content">
+      <div class="tag">Work With Pardona</div>
+      <h1>Join the Team</h1>
+      <p>Pardona is growing fast. We're always looking for talented people who love gaming and want to help build the best server hosting platform for the UK and India.</p>
+    </div>
+  </div>
+
+  <!-- What This Is -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="center fade-up">
+        <div class="tag">Honest Context</div>
+        <h2 class="stitle">What Collaboration Looks Like Here</h2>
+      </div>
+      <div class="perks-grid">
+        <div class="perk-card fade-up"><div class="perk-icon">🧑‍💻</div><h4>Project-Based Work</h4><p>I bring in collaborators on a per-project basis when client scope demands it. No full-time positions yet — just real, paid work.</p></div>
+        <div class="perk-card fade-up"><div class="perk-icon">🏠</div><h4>Fully Remote</h4><p>100% remote. Async-friendly. I care about quality deliverables, not hours on a call.</p></div>
+        <div class="perk-card fade-up"><div class="perk-icon">💬</div><h4>Direct Communication</h4><p>You work directly with me — no PMs in the middle. Decisions get made fast and context doesn't get lost.</p></div>
+        <div class="perk-card fade-up"><div class="perk-icon">🤝</div><h4>Fair, Transparent Pay</h4><p>I pay collaborators fairly and on time. If we're working together, I want it to be worth your while.</p></div>
+        <div class="perk-card fade-up"><div class="perk-icon">🚀</div><h4>Early-Stage Energy</h4><p>This company is brand new. That means things move fast, decisions matter, and your work has real visible impact.</p></div>
+        <div class="perk-card fade-up"><div class="perk-icon">📈</div><h4>Grow With It</h4><p>As Pardona grows, so do the opportunities. Get in early, do great work, and there's room for long-term growth with us.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Open Positions -->
+  <section class="section">
+    <div class="container">
+      <div class="fade-up" style="margin-bottom:36px">
+        <div class="tag">Open Opportunities</div>
+        <h2 class="stitle">Current Openings</h2>
+      </div>
+      <div class="dept-filter fade-up" id="deptFilter">
+        <button class="dept-btn active" onclick="filterJobs('All',this)">All</button>
+        <button class="dept-btn" onclick="filterJobs('Engineering',this)">Engineering</button>
+        <button class="dept-btn" onclick="filterJobs('Design',this)">Design</button>
+        <button class="dept-btn" onclick="filterJobs('Sales',this)">Sales</button>
+        <button class="dept-btn" onclick="filterJobs('Operations',this)">Operations</button>
+      </div>
+      <div class="jobs-list" id="jobsList">
+        <div class="loading-box"><div class="spinner" style="margin:0 auto 12px"></div><p>Loading opportunities…</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Open App -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="cta-banner fade-up">
+        <div class="tag">Don't See a Fit?</div>
+        <h2>Reach Out Anyway</h2>
+        <p>If you're a developer, designer, or operator who does great work and wants to collaborate on tech projects, I want to hear from you.</p>
+        <div class="cta-btns">
+          <button class="btn btn-primary btn-lg" onclick="openApplyModal(null,'Open Application')">Send an Introduction</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page-careers -->
+
+
+<!-- ══════════════════════════════════════════════
+     PAGE: PRICING
+════════════════════════════════════════════════ -->
+<div id="page-pricing" class="page">
+
+  <div class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="container page-hero-content">
+      <div class="tag">Pricing</div>
+      <h1>Simple, Transparent Plans</h1>
+      <p>No hidden fees, no lock-in contracts. Choose the plan that fits your player count, pick your region, and get your server running in minutes.</p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="pricing-grid" id="pricingGrid">
+        <div class="loading-box" style="grid-column:1/-1"><div class="spinner" style="margin:0 auto 12px"></div><p>Loading plans…</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Compare Table -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="center fade-up">
+        <div class="tag">Feature Comparison</div>
+        <h2 class="stitle">Plan Details Side by Side</h2>
+      </div>
+      <div class="compare-wrap fade-up">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th class="tier-head">Starter<br><small style="font-weight:400;color:var(--muted)">From £4/mo</small></th>
+              <th class="tier-head feat">Pro<br><small style="font-weight:400;color:var(--muted)">From £12/mo</small></th>
+              <th class="tier-head">Squad<br><small style="font-weight:400;color:var(--muted)">From £28/mo</small></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="feature-name">Player slots</td><td>Up to 10</td><td>Up to 30</td><td>Up to 100</td></tr>
+            <tr><td class="feature-name">Dedicated CPU &amp; RAM</td><td class="c-yes">✓</td><td class="c-yes">✓</td><td class="c-yes">✓</td></tr>
+            <tr><td class="feature-name">NVMe SSD storage</td><td>5 GB</td><td>20 GB</td><td>60 GB</td></tr>
+            <tr><td class="feature-name">DDoS protection</td><td class="c-yes">✓</td><td class="c-yes">✓</td><td class="c-yes">✓</td></tr>
+            <tr><td class="feature-name">Automated daily backups</td><td class="c-yes">✓</td><td class="c-yes">✓</td><td class="c-yes">✓</td></tr>
+            <tr><td class="feature-name">Web control panel</td><td class="c-yes">✓</td><td class="c-yes">✓</td><td class="c-yes">✓</td></tr>
+            <tr><td class="feature-name">Mod &amp; plugin support</td><td class="c-yes">✓</td><td class="c-yes">✓</td><td class="c-yes">✓</td></tr>
+            <tr><td class="feature-name">UK &amp; India region choice</td><td class="c-yes">✓</td><td class="c-yes">✓</td><td class="c-yes">✓</td></tr>
+            <tr><td class="feature-name">24/7 live support</td><td>Discord</td><td>Discord + chat</td><td>Priority 24/7</td></tr>
+            <tr><td class="feature-name">Multiple game servers</td><td class="c-no">—</td><td class="c-no">—</td><td class="c-yes">✓ Up to 5</td></tr>
+            <tr><td class="feature-name">Custom subdomain</td><td class="c-no">—</td><td class="c-yes">✓</td><td class="c-yes">✓</td></tr>
+            <tr><td class="feature-name">Uptime SLA</td><td>99.9%</td><td>99.9%</td><td>99.9% + credits</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section">
+    <div class="container">
+      <div class="center fade-up">
+        <div class="tag">FAQ</div>
+        <h2 class="stitle">Common Questions</h2>
+      </div>
+      <div class="faq-list fade-up" style="max-width:780px;margin:0 auto">
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Are there setup fees or long-term contracts? <span class="faq-arrow">⌄</span></button>
+          <div class="faq-a"><div class="faq-a-inner">No setup fees and no long-term contracts. All plans are billed monthly and you can cancel at any time. We want you to stay because the service is great, not because you're locked in.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">How long does it take to get my server online? <span class="faq-arrow">⌄</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Under 5 minutes in most cases. After you complete checkout, our system automatically provisions your server, installs the game, and emails you the panel login. You can be in-game within minutes of signing up.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Which region should I choose — UK or India? <span class="faq-arrow">⌄</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Choose the region closest to the majority of your players. If your squad is in the UK or Europe, pick UK (London). If most players are in India or South Asia, pick India (Mumbai). You can also contact us if you're not sure — we can run a latency test for you.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Can I install mods and custom plugins? <span class="faq-arrow">⌄</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Yes, on all plans. The control panel includes a one-click mod installer for popular mod frameworks (Forge, Fabric, Bukkit, Spigot, etc.). For full customisation you also get FTP access to install anything you like.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">What if my game isn't listed? <span class="faq-arrow">⌄</span></button>
+          <div class="faq-a"><div class="faq-a-inner">If your game runs a dedicated server binary, we can almost certainly host it. Contact us through the form or Discord and tell us the game — we'll confirm support within a few hours and set it up for you manually if needed.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">What happens to my server data if I cancel? <span class="faq-arrow">⌄</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Your world files and configuration belong to you. Before cancelling, download everything via FTP or the panel's backup tool. We keep your data for 14 days after cancellation so you have time to retrieve it if needed.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section section-alt" style="padding:72px 0">
+    <div class="container">
+      <div class="cta-banner fade-up">
+        <h2>Not Sure Which Plan Fits?</h2>
+        <p>Tell us your game, how many players you have, and which region you need — we'll point you to the right plan in minutes. No upsells, no pressure.</p>
+        <div class="cta-btns">
+          <button class="btn btn-primary btn-lg" onclick="navigate('contact')">Ask Us Anything</button>
+          <button class="btn btn-outline btn-lg" onclick="navigate('services')">Browse Servers</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page-pricing -->
+
+
+<!-- ══════════════════════════════════════════════
+     PAGE: CONTACT
+════════════════════════════════════════════════ -->
+<div id="page-contact" class="page">
+
+  <div class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="container page-hero-content">
+      <div class="tag">Get in Touch</div>
+      <h1>We're Here to Help</h1>
+      <p>Got a question about a server plan, need help with setup, or want to run a custom game? Our team is available 24/7 — reach out and we'll get back to you fast.</p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="contact-grid">
+        <div class="fade-up">
+          <div class="tag">Get in Touch</div>
+          <h2 class="stitle">Let's Talk</h2>
+          <p>Whether you have a question about a plan, need help migrating an existing server, or want to chat about hosting a custom game, we're here.</p>
+          <div class="c-items">
+            <div class="c-item"><div class="c-icon">💬</div><div><h4>Discord</h4><p>Join our Discord — Average response &lt;10 min</p></div></div>
+            <div class="c-item"><div class="c-icon">🇬🇧</div><div><h4>United Kingdom</h4><p>London, England · UK Data Centre</p></div></div>
+            <div class="c-item"><div class="c-icon">🇮🇳</div><div><h4>India</h4><p>Mumbai, Maharashtra · India Data Centre</p></div></div>
+            <div class="c-item"><div class="c-icon">🕐</div><div><h4>Support Hours</h4><p>24/7, 365 days a year<br><small style="color:var(--muted)">Live support on Discord and live chat always available</small></p></div></div>
+          </div>
+        </div>
+        <div class="fade-up">
+          <div class="form-wrap" id="contactFormWrap">
+            <form id="contactForm" onsubmit="submitContact(event)" novalidate>
+              <div class="form-row">
+                <div class="fg" id="fg-fname"><label>First Name *</label><input type="text" name="first_name" required/><div class="field-err"></div></div>
+                <div class="fg" id="fg-lname"><label>Last Name *</label><input type="text" name="last_name" required/><div class="field-err"></div></div>
+              </div>
+              <div class="fg" id="fg-email"><label>Email *</label><input type="email" name="email" required/><div class="field-err"></div></div>
+              <div class="fg"><label>What Can We Help With?</label>
+                <select name="service_interest">
+                  <option value="" disabled selected>Select a topic…</option>
+                  <option>New Server Setup</option>
+                  <option>Billing or Account</option>
+                  <option>Technical Support</option>
+                  <option>Custom Game Hosting</option>
+                  <option>Migrating from Another Host</option>
+                  <option>Partnership or Bulk Plans</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="fg"><label>Tell Us More</label><textarea name="message"></textarea></div>
+              <button type="submit" class="btn btn-primary btn-full btn-lg" id="contactSubmitBtn">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                Send Message
+              </button>
+              <p class="form-note">We respond within a few hours. Your info is never shared.</p>
+            </form>
+
+            <!-- Confirmation (shown after submit) -->
+            <div id="contactConfirm" style="display:none;text-align:center;padding:52px 24px">
+              <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent-glow),var(--accent));display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:2rem;box-shadow:0 0 36px rgba(220,38,38,.4)">✓</div>
+              <h3 style="font-size:1.5rem;font-weight:900;margin-bottom:12px">Message Sent!</h3>
+              <p id="contactConfirmMsg" style="color:var(--muted);font-size:.97rem;line-height:1.75;max-width:340px;margin:0 auto 32px"></p>
+              <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+                <button class="btn btn-primary" onclick="resetContactForm()">Send Another</button>
+                <button class="btn btn-outline" onclick="navigate('portfolio')">View My Work</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page-contact -->
+
+
+<!-- ══════════════════════════════════════════════
+     PAGE: PORTFOLIO
+════════════════════════════════════════════════ -->
+<div id="page-portfolio" class="page">
+
+  <div class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="container page-hero-content">
+      <div class="tag">My Work</div>
+      <h1>Project Portfolio</h1>
+      <p>A showcase of websites, APIs, and infrastructure projects I've built. Browse by category or explore everything.</p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <!-- Filter -->
+      <div class="port-filter fade-up" id="portFilter">
+        <button class="port-btn active" onclick="filterProjects('All',this)">All</button>
+        <button class="port-btn" onclick="filterProjects('Web Development',this)">Web Development</button>
+        <button class="port-btn" onclick="filterProjects('AI Integration',this)">AI Integration</button>
+        <button class="port-btn" onclick="filterProjects('IT Infrastructure',this)">IT Infrastructure</button>
+        <button class="port-btn" onclick="filterProjects('Branding & Design',this)">Branding & Design</button>
+        <button class="port-btn" onclick="filterProjects('Presentations',this)">Presentations</button>
+        <button class="port-btn" onclick="filterProjects('General',this)">Other</button>
+      </div>
+
+      <!-- Grid -->
+      <div class="port-grid" id="portGrid">
+        <div class="loading-box" style="grid-column:1/-1">
+          <div class="spinner" style="margin:0 auto 12px"></div>
+          <p>Loading projects…</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page-portfolio -->
+
+<!-- ══ PROJECT DETAIL MODAL ══ -->
+<div class="modal-overlay" id="projModal" onclick="if(event.target===this)closeProjModal()">
+  <div class="modal" style="max-width:760px">
+    <div class="modal-header">
+      <div>
+        <h3 id="pm-title">Project</h3>
+        <div id="pm-cat" style="font-size:.8rem;color:var(--accent-glow);margin-top:3px"></div>
+      </div>
+      <button class="modal-close" onclick="closeProjModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- Main viewer -->
+      <div class="pm-gallery" id="pmGallery"></div>
+      <!-- Thumbnail strip -->
+      <div class="pm-thumbs" id="pmThumbs"></div>
+      <!-- Meta -->
+      <div class="pm-meta" id="pmMeta"></div>
+      <p class="pm-desc" id="pmDesc"></p>
+      <div class="pm-tags" id="pmTags"></div>
+    </div>
+    <div class="modal-footer" id="pmFooter" style="justify-content:space-between;align-items:center">
+      <span id="pm-file-label" style="font-size:.8rem;color:var(--muted)"></span>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-outline" onclick="closeProjModal()">Close</button>
+        <a id="pmDownload" class="btn btn-ghost" href="#" download style="display:none">
+          ⬇ Download File
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo" onclick="navigate('home')" style="cursor:pointer">Par<span>dona</span></div>
+        <p>Dedicated game server hosting for the UK and India. Low latency, 24/7 uptime, and a panel that takes minutes to master.</p>
+        <p style="margin-top:8px;font-size:.8rem;color:var(--muted)">🇬🇧 London, England &nbsp;·&nbsp; 🇮🇳 Mumbai, India</p>
+      </div>
+      <div class="footer-col">
+        <h5>Servers</h5>
+        <ul>
+          <li><a onclick="navigate('services')">Dedicated Servers</a></li>
+          <li><a onclick="navigate('services')">UK Region</a></li>
+          <li><a onclick="navigate('services')">India Region</a></li>
+          <li><a onclick="navigate('services')">Supported Games</a></li>
+          <li><a onclick="navigate('pricing')">Pricing</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a onclick="navigate('about')">About Us</a></li>
+          <li><a onclick="navigate('about')">Our Story</a></li>
+          <li><a onclick="navigate('pricing')">Plans</a></li>
+          <li><a onclick="navigate('contact')">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Support</h5>
+        <ul>
+          <li><a>24/7 Live Support</a></li>
+          <li style="margin-top:8px"><a onclick="navigate('contact')" style="color:var(--accent-glow);font-weight:600">Get Help →</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="footer-bottom">
+      <p>&copy; 2026 Pardona &nbsp;·&nbsp; 🇬🇧 UK &amp; 🇮🇳 India &nbsp;·&nbsp; <a href="#" style="color:var(--muted);transition:color var(--tr)" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">Terms</a> &nbsp;·&nbsp; <a href="#" style="color:var(--muted);transition:color var(--tr)" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">Privacy</a></p>
+    </div>
+  </div>
+</footer>
+
+<!-- ══ JOB DETAIL MODAL ══ -->
+<div class="modal-overlay" id="jobModal" onclick="if(event.target===this)closeJobModal()">
+  <div class="modal" id="jobModalContent">
+    <div class="modal-header">
+      <div><h3 id="jm-title">Job Title</h3><div id="jm-dept" style="font-size:.82rem;color:var(--muted);margin-top:4px"></div></div>
+      <button class="modal-close" onclick="closeJobModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="job-detail-meta" id="jm-meta"></div>
+      <div class="jd-section"><p class="jd-desc" id="jm-desc"></p></div>
+      <div class="jd-section"><h4>Responsibilities</h4><ul class="jd-list" id="jm-resp"></ul></div>
+      <div class="jd-section"><h4>Requirements</h4><ul class="jd-list" id="jm-reqs"></ul></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeJobModal()">Close</button>
+      <button class="btn btn-primary" id="jm-apply-btn">Apply for This Role</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APPLY MODAL ══ -->
+<!-- ══ HIRE ME MODAL ══ -->
+<div class="modal-overlay" id="hireModal" onclick="if(event.target===this)closeHireModal()">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header" id="hireModalHeader">
+      <div>
+        <h3>Get in Touch</h3>
+        <div style="font-size:.82rem;color:var(--accent-glow);margin-top:3px">Tell us what you need — we'll get back to you within a few hours.</div>
+      </div>
+      <button class="modal-close" onclick="closeHireModal()">✕</button>
+    </div>
+
+    <!-- Form state -->
+    <div class="modal-body" id="hireFormBody">
+      <form id="hireForm" onsubmit="submitHire(event)" novalidate>
+        <div class="form-row">
+          <div class="fg"><label>First Name *</label><input type="text" name="first_name" required/></div>
+          <div class="fg"><label>Last Name *</label><input type="text" name="last_name" required/></div>
+        </div>
+        <div class="fg"><label>Email *</label><input type="email" name="email" required/></div>
+        <div class="form-row">
+          <div class="fg"><label>Company</label><input type="text" name="company"/></div>
+          <div class="fg"><label>Phone</label><input type="tel" name="phone"/></div>
+        </div>
+        <div class="fg"><label>What can we help with?</label>
+          <select name="service_interest">
+            <option value="" disabled selected>Select a topic…</option>
+            <option>New Server Setup</option>
+            <option>Billing or Account</option>
+            <option>Technical Support</option>
+            <option>Custom Game Hosting</option>
+            <option>Migrating from Another Host</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="fg"><label>Tell us more</label>
+          <textarea name="message" style="min-height:110px"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full btn-lg" id="hireSubmitBtn" style="margin-top:4px">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          Send Request
+        </button>
+      </form>
+    </div>
+
+    <!-- Confirmation state (hidden until submit) -->
+    <div class="modal-body" id="hireConfirmBody" style="display:none;text-align:center;padding:52px 36px">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:1.8rem;box-shadow:0 0 32px rgba(220,38,38,.4)">✓</div>
+      <h3 style="font-size:1.4rem;font-weight:900;margin-bottom:10px">Request Received!</h3>
+      <p style="color:var(--muted);font-size:.95rem;line-height:1.7;max-width:340px;margin:0 auto 28px" id="hireConfirmMsg">I've got your message and will be in touch within 24 hours.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="closeHireModal()">Done</button>
+        <button class="btn btn-outline" onclick="navigate('portfolio');closeHireModal()">View My Work</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="applyModal" onclick="if(event.target===this)closeApplyModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div><h3>Apply Now</h3><div id="apply-job-name" style="font-size:.85rem;color:var(--accent-glow);margin-top:3px"></div></div>
+      <button class="modal-close" onclick="closeApplyModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="applyForm" onsubmit="submitApplication(event)" novalidate>
+        <input type="hidden" id="apply-career-id"/>
+        <div class="form-row">
+          <div class="fg"><label>First Name *</label><input type="text" name="first_name" required/></div>
+          <div class="fg"><label>Last Name *</label><input type="text" name="last_name" required/></div>
+        </div>
+        <div class="fg"><label>Email *</label><input type="email" name="email" required/></div>
+        <div class="form-row">
+          <div class="fg"><label>Phone</label><input type="tel" name="phone"/></div>
+          <div class="fg"><label>Years of Experience</label><input type="number" name="years_experience" min="0" max="40"/></div>
+        </div>
+        <div class="fg"><label>LinkedIn URL</label><input type="url" name="linkedin_url"/></div>
+        <div class="fg"><label>Portfolio / Website</label><input type="url" name="portfolio_url"/></div>
+        <div class="fg"><label>Cover Letter</label><textarea name="cover_letter" style="min-height:140px"></textarea></div>
+        <div class="fg">
+          <label>Resume <span style="font-weight:400;opacity:.7">(PDF, DOC or DOCX — optional)</span></label>
+          <input type="file" name="resume" accept=".pdf,.doc,.docx" style="width:100%;padding:9px 14px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius);color:var(--off-white);font-size:.87rem;font-family:inherit;cursor:pointer"/>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full" id="applySubmitBtn">Submit Application</button>
+        <p class="form-note" style="margin-top:10px">I review all applications and follow up within 5–7 business days.</p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div id="toast"></div>
+
+<script>
+// ── State ──
+let allJobs = [];
+let currentJobId = null;
+
+// ── Router ──
+const pages = ['home','services','about','careers','portfolio','pricing','contact'];
+let initialized = {};
+let disabledPages = new Set();
+
+async function loadPageConfig() {
+  try {
+    const res = await API.get('/api/pages');
+    disabledPages = new Set((res.data||[]).filter(p => !p.is_active).map(p => p.id));
+  } catch {}
+}
+
+function navigate(page) {
+  if (!pages.includes(page)) page = 'home';
+  if (page !== 'home' && disabledPages.has(page)) page = 'home';
+  pages.forEach(p => {
+    document.getElementById('page-'+p).classList.remove('active');
+    const btn = document.querySelector(`[data-page="${p}"]`);
+    if (btn) btn.classList.remove('active');
+  });
+  document.getElementById('page-'+page).classList.add('active');
+  const btn = document.querySelector(`[data-page="${page}"]`);
+  if (btn) btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'instant'});
+  if (!initialized[page]) { initialized[page]=true; initPage(page); }
+  observeFadeUps();
+}
+
+function initPage(page) {
+  if (page === 'careers')   loadCareers();
+  if (page === 'pricing')   loadPricing();
+  if (page === 'portfolio') loadPortfolio();
+}
+
+// ── API ──
+const API = {
+  async get(path) {
+    const r = await fetch(path);
+    return r.json();
+  },
+  async post(path, body) {
+    const r = await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    return r.json();
+  }
+};
+
+// ── Nav scroll ──
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>40);
+});
+
+function toggleMobileNav() {
+  document.getElementById('mobileNav').classList.toggle('open');
+}
+
+// ── FAQ ──
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// ── Fade up observer ──
+const io = new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){
+      setTimeout(()=>e.target.classList.add('in'),i*60);
+      io.unobserve(e.target);
+    }
+  });
+},{threshold:0.1});
+
+function observeFadeUps(){
+  document.querySelectorAll('.fade-up:not(.in)').forEach(el=>io.observe(el));
+}
+
+// ── Toast ──
+let toastTimer;
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `show ${type}`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ t.className=''; },5000);
+}
+
+// ── Careers ──
+async function loadCareers(dept='All') {
+  const container = document.getElementById('jobsList');
+  container.innerHTML = '<div class="loading-box"><div class="spinner" style="margin:0 auto 12px"></div><p>Loading open positions…</p></div>';
+  try {
+    const url = dept && dept!=='All' ? `/api/careers?department=${encodeURIComponent(dept)}` : '/api/careers';
+    const res = await API.get(url);
+    allJobs = res.data || [];
+    renderJobs(allJobs);
+  } catch {
+    container.innerHTML = '<div class="jobs-empty">Unable to load positions. Please refresh or <span style="color:var(--accent-glow);cursor:pointer" onclick="navigate(\'contact\')">contact us</span> directly.</div>';
+  }
+}
+
+function filterJobs(dept, btn) {
+  document.querySelectorAll('.dept-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if (dept === 'All') {
+    renderJobs(allJobs);
+  } else {
+    renderJobs(allJobs.filter(j=>j.department===dept));
+  }
+}
+
+function renderJobs(jobs) {
+  const container = document.getElementById('jobsList');
+  if (!jobs.length) {
+    container.innerHTML = '<div class="jobs-empty">No open positions in this department right now.<br>Check back soon or send an open application below.</div>';
+    return;
+  }
+  container.innerHTML = jobs.map(j=>`
+    <div class="job-card" onclick="openJobDetail(${j.id})">
+      <div class="job-dept-badge">${j.department}</div>
+      <div class="job-info">
+        <h3>${j.title}</h3>
+        <div class="job-meta">
+          <span>📍 ${j.location}</span>
+          <span>⏱ ${j.type}</span>
+          <span>📊 ${j.level}</span>
+        </div>
+      </div>
+      <div class="job-salary">${j.salary_range||'Competitive'}</div>
+      <div class="job-arrow">→</div>
+    </div>
+  `).join('');
+}
+
+function openJobDetail(id) {
+  const job = allJobs.find(j=>j.id===id);
+  if (!job) return;
+  currentJobId = id;
+  document.getElementById('jm-title').textContent = job.title;
+  document.getElementById('jm-dept').textContent = `${job.department} · ${job.type} · ${job.level}`;
+  document.getElementById('jm-desc').textContent = job.description;
+  document.getElementById('jm-meta').innerHTML = [
+    `<span class="jd-badge">📍 ${job.location}</span>`,
+    `<span class="jd-badge">⏱ ${job.type}</span>`,
+    `<span class="jd-badge">📊 ${job.level}</span>`,
+    job.salary_range ? `<span class="jd-badge">💰 ${job.salary_range}</span>` : ''
+  ].join('');
+  document.getElementById('jm-resp').innerHTML = (job.responsibilities||[]).map(r=>`<li>${r}</li>`).join('');
+  document.getElementById('jm-reqs').innerHTML = (job.requirements||[]).map(r=>`<li>${r}</li>`).join('');
+  document.getElementById('jm-apply-btn').onclick = ()=>{ closeJobModal(); openApplyModal(id, job.title); };
+  document.getElementById('jobModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeJobModal() {
+  document.getElementById('jobModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+// ── Hire Me Modal ──
+function openHireModal() {
+  document.getElementById('hireForm').reset();
+  document.getElementById('hireFormBody').style.display = '';
+  document.getElementById('hireConfirmBody').style.display = 'none';
+  document.getElementById('hireModalHeader').style.display = '';
+  document.getElementById('hireModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeHireModal() {
+  document.getElementById('hireModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+async function submitHire(e) {
+  e.preventDefault();
+  const form = e.target;
+  const btn = document.getElementById('hireSubmitBtn');
+  const fd = new FormData(form);
+  const data = Object.fromEntries(fd.entries());
+
+  if (!data.first_name || !data.last_name) { showToast('Please enter your name.','error'); return; }
+  if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) { showToast('Please enter a valid email.','error'); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Sending…';
+
+  try {
+    // Submit as contact message (also auto-generates lead on server)
+    const res = await API.post('/api/contact', data);
+    if (!res.success) { showToast(res.error || 'Submission failed.', 'error'); return; }
+
+    // Also submit as application record
+    await API.post('/api/careers/apply', {
+      first_name: data.first_name,
+      last_name:  data.last_name,
+      email:      data.email,
+      phone:      data.phone || '',
+      cover_letter: data.message || '',
+      career_id:  null
+    });
+
+    // Show confirmation
+    const name = data.first_name;
+    document.getElementById('hireConfirmMsg').textContent =
+      `Got it, ${name}! Our team will review your message and get back to you within a few hours.`;
+    document.getElementById('hireFormBody').style.display = 'none';
+    document.getElementById('hireModalHeader').style.display = 'none';
+    document.getElementById('hireConfirmBody').style.display = '';
+  } catch {
+    showToast('Network error. Please try again.', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> Send Request';
+  }
+}
+
+function openApplyModal(careerId, jobTitle) {
+  document.getElementById('apply-career-id').value = careerId || '';
+  document.getElementById('apply-job-name').textContent = jobTitle || 'Open Application';
+  document.getElementById('applyForm').reset();
+  document.getElementById('apply-career-id').value = careerId || '';
+  document.getElementById('applyModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeApplyModal() {
+  document.getElementById('applyModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+async function submitApplication(e) {
+  e.preventDefault();
+  const form = e.target;
+  const btn = document.getElementById('applySubmitBtn');
+  const fd = new FormData(form);
+  const careerId = document.getElementById('apply-career-id').value || '';
+
+  const firstName = (fd.get('first_name')||'').trim();
+  const lastName  = (fd.get('last_name')||'').trim();
+  const email     = (fd.get('email')||'').trim();
+  if (!firstName || !lastName || !email) {
+    showToast('Please fill in your name and email.','error'); return;
+  }
+
+  const resumeFile = fd.get('resume');
+  const hasResume  = resumeFile && resumeFile.size > 0;
+
+  btn.disabled=true; btn.innerHTML='<div class="spinner"></div> Submitting…';
+  try {
+    let r;
+    if (hasResume) {
+      fd.set('career_id', careerId);
+      r = await fetch('/api/careers/apply', { method: 'POST', body: fd });
+    } else {
+      r = await fetch('/api/careers/apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          career_id:        careerId,
+          first_name:       firstName,
+          last_name:        lastName,
+          email,
+          phone:            (fd.get('phone')||'').trim(),
+          years_experience: fd.get('years_experience')||'0',
+          linkedin_url:     (fd.get('linkedin_url')||'').trim(),
+          portfolio_url:    (fd.get('portfolio_url')||'').trim(),
+          cover_letter:     (fd.get('cover_letter')||'').trim(),
+        })
+      });
+    }
+    const res = await r.json();
+    if (res.success) {
+      closeApplyModal();
+      showToast(res.message,'success');
+    } else {
+      showToast(res.error||'Submission failed.','error');
+    }
+  } catch {
+    showToast('Network error. Please try again.','error');
+  } finally {
+    btn.disabled=false; btn.textContent='Submit Application';
+  }
+}
+
+// ── Pricing ──
+async function loadPricing() {
+  const grid = document.getElementById('pricingGrid');
+  try {
+    const res = await API.get('/api/packages');
+    const pkgs = res.data || [];
+    grid.innerHTML = pkgs.map(p=>`
+      <div class="p-card ${p.is_featured?'featured':''}">
+        ${p.is_featured?'<div class="popular-tag">Most Popular</div>':''}
+        <div class="p-tier">${p.tier}</div>
+        <h3>${p.name}</h3>
+        <div class="price-row">
+          ${p.price_period ? `<span class="p-cur">£</span><span class="p-amt">${p.price_amount}</span><span class="p-period">${p.price_period}</span>` : `<span class="p-amt" style="font-size:2rem">${p.price_amount}</span>`}
+        </div>
+        <p class="p-desc">${p.description}</p>
+        <hr class="p-divider"/>
+        <ul class="p-features">
+          ${(p.features||[]).map(f=>`<li class="p-feat"><span class="p-check">✓</span>${f}</li>`).join('')}
+        </ul>
+        <button class="btn ${p.is_featured?'btn-primary':'btn-outline'} btn-full" onclick="navigate('contact')">Get Started</button>
+      </div>
+    `).join('');
+  } catch {
+    grid.innerHTML = '<div class="loading-box" style="grid-column:1/-1">Unable to load pricing. Please <span style="color:var(--accent-glow);cursor:pointer" onclick="navigate(\'contact\')">contact us</span> for details.</div>';
+  }
+  observeFadeUps();
+}
+
+// ── Contact form ──
+async function submitContact(e) {
+  e.preventDefault();
+  const form = e.target;
+  const btn = document.getElementById('contactSubmitBtn');
+  form.querySelectorAll('.fg').forEach(f=>{
+    f.classList.remove('err');
+    const errEl = f.querySelector('.field-err');
+    if (errEl) errEl.textContent = '';
+  });
+  const fd = new FormData(form);
+  const data = Object.fromEntries(fd.entries());
+  let valid = true;
+  if (!data.first_name) { markErr('fg-fname','Required'); valid=false; }
+  if (!data.last_name)  { markErr('fg-lname','Required'); valid=false; }
+  if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) { markErr('fg-email','Enter a valid email'); valid=false; }
+  if (!valid) return;
+  btn.disabled=true; btn.innerHTML='<div class="spinner"></div> Sending…';
+  try {
+    const res = await API.post('/api/contact', data);
+    if (res.success) {
+      form.style.display = 'none';
+      document.getElementById('contactConfirmMsg').textContent =
+        `Got it, ${data.first_name}! Our team will review your message and get back to you within a few hours.`;
+      document.getElementById('contactConfirm').style.display = '';
+    } else {
+      showToast(res.error||'Submission failed. Please try again.','error');
+    }
+  } catch {
+    showToast('Network error. Please try again.','error');
+  } finally {
+    btn.disabled=false;
+    btn.innerHTML='<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> Send Message';
+  }
+}
+
+function resetContactForm() {
+  const form = document.getElementById('contactForm');
+  form.reset();
+  form.style.display = '';
+  document.getElementById('contactConfirm').style.display = 'none';
+}
+
+function markErr(id, msg) {
+  const fg = document.getElementById(id);
+  if (!fg) return;
+  fg.classList.add('err');
+  fg.querySelector('.field-err').textContent = msg;
+}
+
+// ── Newsletter ──
+async function submitNewsletter(e) {
+  e.preventDefault();
+  const email = document.getElementById('nl-email').value.trim();
+  const btn = document.getElementById('nl-btn');
+  if (!email) return;
+  btn.disabled=true; btn.textContent='…';
+  try {
+    const res = await API.post('/api/leads',{email,source:'newsletter'});
+    if (res.success) {
+      document.getElementById('nl-email').value='';
+      showToast(res.message,'success');
+    } else {
+      showToast(res.error||'Failed to subscribe.','error');
+    }
+  } catch {
+    showToast('Network error.','error');
+  } finally {
+    btn.disabled=false; btn.textContent='Subscribe';
+  }
+}
+
+// ── Init ──
+window.addEventListener('DOMContentLoaded',async ()=>{
+  await loadPageConfig();
+  const hash = (location.hash||'#home').slice(1);
+  navigate(pages.includes(hash)?hash:'home');
+});
+
+window.addEventListener('hashchange',()=>{
+  const page = location.hash.slice(1);
+  if (pages.includes(page)) navigate(page);
+});
+
+// ── Portfolio ─────────────────────────────────────────────────────────────────
+
+let allProjects = [];
+let currentProjFiles = [];
+let currentFileIdx = 0;
+
+async function loadPortfolio() {
+  const grid = document.getElementById('portGrid');
+  try {
+    const res = await API.get('/api/projects');
+    allProjects = res.data || [];
+    renderProjects(allProjects);
+  } catch {
+    grid.innerHTML = '<div class="port-empty"><div class="pe-icon">😕</div><p>Could not load projects. Please refresh.</p></div>';
+  }
+}
+
+function filterProjects(cat, btn) {
+  document.querySelectorAll('.port-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const list = cat === 'All' ? allProjects : allProjects.filter(p => p.category === cat);
+  renderProjects(list);
+}
+
+function renderProjects(list) {
+  const grid = document.getElementById('portGrid');
+  if (!list.length) {
+    grid.innerHTML = `<div class="port-empty"><div class="pe-icon">📂</div><p>No projects in this category yet.</p></div>`;
+    return;
+  }
+  grid.innerHTML = list.map(p => projCard(p)).join('');
+  observeFadeUps();
+}
+
+function projCard(p) {
+  const firstFile = (p.files || [])[0];
+  const kinds = [...new Set((p.files || []).map(f => f.kind))];
+  const kindLabel = kinds.length > 1 ? `${kinds.length} file types` : (kinds[0] || '');
+  const fileCount = (p.files || []).length;
+
+  let thumbHtml = '';
+  if (p.thumbnail) {
+    const isVideo = firstFile?.kind === 'video';
+    thumbHtml = isVideo
+      ? `<div class="proj-thumb-video">
+           <video src="${p.thumbnail}" muted style="width:100%;height:100%;object-fit:cover"></video>
+           <div class="proj-play"><div class="proj-play-btn">▶</div></div>
+         </div>`
+      : `<img src="${p.thumbnail}" alt="${p.title}" loading="lazy"/>`;
+  } else {
+    const icon = kindIcon(firstFile?.kind);
+    thumbHtml = `<div class="proj-thumb-placeholder">${icon}</div>`;
+  }
+
+  return `
+    <div class="proj-card fade-up" onclick="openProject(${p.id})">
+      <div class="proj-thumb">
+        ${thumbHtml}
+        <span class="proj-kind-badge">${kindLabel || 'Project'}</span>
+      </div>
+      <div class="proj-body">
+        <div class="proj-cat">${p.category}</div>
+        <h3>${p.title}</h3>
+        <p>${p.description || ''}</p>
+        <div class="proj-tags">
+          ${(p.tags || []).map(t => `<span class="proj-tag">${t}</span>`).join('')}
+        </div>
+        <div class="proj-footer">
+          <span class="proj-file-count">${fileCount} file${fileCount !== 1 ? 's' : ''} attached</span>
+          <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openProject(${p.id})">View →</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function kindIcon(kind) {
+  const map = { image:'🖼️', video:'🎬', presentation:'📊', pdf:'📄', file:'📎' };
+  return map[kind] || '📁';
+}
+
+function openProject(id) {
+  const p = allProjects.find(x => x.id === id);
+  if (!p) return;
+
+  currentProjFiles = p.files || [];
+  currentFileIdx = 0;
+
+  document.getElementById('pm-title').textContent = p.title;
+  document.getElementById('pm-cat').textContent = p.category;
+  document.getElementById('pmDesc').textContent = p.long_description || p.description || '';
+  document.getElementById('pmMeta').innerHTML = [
+    `<span class="pm-badge">${p.category}</span>`,
+    `<span class="pm-badge">${currentProjFiles.length} file${currentProjFiles.length !== 1 ? 's' : ''}</span>`,
+    `<span class="pm-badge">${new Date(p.created_at).toLocaleDateString('en-US',{month:'long',year:'numeric'})}</span>`
+  ].join('');
+  document.getElementById('pmTags').innerHTML = (p.tags || []).map(t => `<span class="proj-tag">${t}</span>`).join('');
+
+  // Thumbnail strip
+  document.getElementById('pmThumbs').innerHTML = currentProjFiles.map((f, i) => `
+    <div class="pm-thumb ${i === 0 ? 'active' : ''}" onclick="showFile(${i})">
+      ${f.kind === 'image'
+        ? `<img src="${f.url}" alt=""/>`
+        : `<span style="font-size:1.5rem">${kindIcon(f.kind)}</span>`}
+    </div>`).join('');
+
+  showFile(0);
+  document.getElementById('projModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function showFile(idx) {
+  if (!currentProjFiles.length) return;
+  idx = Math.max(0, Math.min(idx, currentProjFiles.length - 1));
+  currentFileIdx = idx;
+  const f = currentProjFiles[idx];
+  const gallery = document.getElementById('pmGallery');
+  const dl = document.getElementById('pmDownload');
+  const label = document.getElementById('pm-file-label');
+
+  // Update thumbnail strip active state
+  document.querySelectorAll('#pmThumbs .pm-thumb').forEach((t, i) => {
+    t.classList.toggle('active', i === idx);
+  });
+
+  label.textContent = `${idx + 1} / ${currentProjFiles.length} — ${f.original_name}`;
+
+  // Render viewer
+  if (f.kind === 'image') {
+    gallery.innerHTML = `<img src="${f.url}" alt="${f.original_name}" style="width:100%;height:100%;object-fit:contain"/>`;
+    dl.href = f.url; dl.style.display = 'flex';
+  } else if (f.kind === 'video') {
+    gallery.innerHTML = `<video controls autoplay muted src="${f.url}" style="width:100%;height:100%"></video>`;
+    dl.href = f.url; dl.style.display = 'flex';
+  } else if (f.kind === 'pdf') {
+    gallery.innerHTML = `<iframe src="${f.url}" style="width:100%;height:100%;border:none;border-radius:var(--radius-lg)"></iframe>`;
+    dl.href = f.url; dl.style.display = 'flex';
+  } else if (f.kind === 'presentation') {
+    // PPT: use Google Docs viewer (requires public URL; localhost shows download fallback)
+    const absUrl = `${location.protocol}//${location.host}${f.url}`;
+    const gView = `https://docs.google.com/gviewer?embedded=true&url=${encodeURIComponent(absUrl)}`;
+    gallery.innerHTML = `
+      <div class="pm-placeholder">
+        <div class="pi">📊</div>
+        <p style="font-size:.9rem;text-align:center;color:var(--muted);max-width:320px">
+          PowerPoint files can't be previewed in-browser on localhost.<br>
+          Use the download button to open in PowerPoint or upload to a public URL for the embedded viewer.
+        </p>
+        <a href="${f.url}" download class="btn btn-primary btn-sm" style="margin-top:8px">⬇ Download ${f.original_name}</a>
+      </div>`;
+    dl.href = f.url; dl.style.display = 'flex';
+  } else {
+    gallery.innerHTML = `
+      <div class="pm-placeholder">
+        <div class="pi">${kindIcon(f.kind)}</div>
+        <p>${f.original_name}</p>
+        <a href="${f.url}" download class="btn btn-ghost btn-sm" style="margin-top:8px">⬇ Download</a>
+      </div>`;
+    dl.href = f.url; dl.style.display = 'flex';
+  }
+}
+
+function closeProjModal() {
+  document.getElementById('projModal').classList.remove('open');
+  document.body.style.overflow = '';
+  // Stop any playing video
+  document.getElementById('pmGallery').innerHTML = '';
+}
+</script>
+</body>
+</html>
